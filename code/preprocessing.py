@@ -5,8 +5,9 @@ import re
 from nltk.stem import WordNetLemmatizer
 import inflect
 import num2words
-
-download('stopwords')
+from nltk.tokenize import word_tokenize
+download('punkt', quiet=True)
+download('stopwords', quiet=True)
 ENGLISH_STOPWORDS = stopwords.words("english")
 
 # Regex compilations for additional performance
@@ -33,14 +34,19 @@ class Preprocessing:
     def __init__(self):
         self.prompt = ""
 
-    def transform_prompt(self, prompt):
+    def transform_prompt(self, prompt, tokenize = True):
         self.prompt = prompt.lower()
         self.convert_to_numeric()
         self.remove_stopwords()
         self.strip_formatting()
         self.lemmatize_prompt()
+        if tokenize:
+            self.tokenize()
 
         return self.prompt
+
+    def tokenize(self):
+        self.prompt = word_tokenize(self.prompt)
 
     def strip_formatting(self):
         replace_to_blank = [
@@ -99,6 +105,6 @@ if __name__ == "__main__":
 
     preprocesser = Preprocessing()
 
-    new_text = preprocesser.transform_prompt(text)
+    new_text = preprocesser.transform_prompt(text, True)
 
     print(new_text)
