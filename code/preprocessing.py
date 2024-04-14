@@ -6,6 +6,7 @@ from nltk.stem import WordNetLemmatizer
 import inflect
 import num2words
 from nltk.tokenize import word_tokenize
+
 download('punkt', quiet=True)
 download('stopwords', quiet=True)
 ENGLISH_STOPWORDS = stopwords.words("english")
@@ -34,12 +35,19 @@ class Preprocessing:
     def __init__(self):
         self.prompt = ""
 
-    def transform_prompt(self, prompt, tokenize = True):
+    # Performs all preprocessing steps with an option to tokenize the text and return a list or to return the full
+    # un-tokenized text. Also an option to decide if the text will be lemmatized or stemmed
+    def transform_prompt(self, prompt, tokenize=True, lemmatize_or_stemming='lemmatize'):
         self.prompt = prompt.lower()
         self.convert_to_numeric()
+        self.replace_words()
+        # print(self.prompt)
         self.remove_stopwords()
         self.strip_formatting()
-        self.lemmatize_prompt()
+        if lemmatize_or_stemming == 'lemmatize':
+            self.lemmatize_prompt()
+        else:
+            self.stem_prompt()
         if tokenize:
             self.tokenize()
 
@@ -48,6 +56,7 @@ class Preprocessing:
     def tokenize(self):
         self.prompt = word_tokenize(self.prompt)
 
+    # remove special characters and certain patterns.
     def strip_formatting(self):
         replace_to_blank = [
             EMAIL_PATTERN,
@@ -84,6 +93,7 @@ class Preprocessing:
         )
         self.prompt = " ".join(important_words)
 
+    # Convert all numbers to their word format ex. 42 -> forty-two
     def convert_to_numeric(self):
         new_prompt = []
         words = re.findall(r"\w+", self.prompt)
@@ -94,6 +104,19 @@ class Preprocessing:
                 new_prompt.append(word)
 
         self.prompt = " ".join(new_prompt)
+
+    # Replace certain words into other words defined in list_of_replaces.txt ex. AI -> Artificial intelligence
+    def replace_words(self):
+        word_replaces = {}
+        with open("list_of_replaces.txt", 'r') as file:
+            for line in file:
+                line_splitted = line.split()
+                key = line_splitted[0]
+                val = " ".join([w for w in line_splitted[1:]])
+                word_replaces[key] = val
+        for replace_from, replace_to in word_replaces.items():
+            # print(replace_from, ' ', replace_to)
+            self.prompt = re.sub(r"\b"+replace_from+r"\b", replace_to, self.prompt)
 
 
 if __name__ == "__main__":
