@@ -1,16 +1,19 @@
 import os
 import gensim
-import smart_open
 from sklearn.metrics import pairwise
 from preprocessing import Preprocessing
+from nltk.tokenize import sent_tokenize
 import random
 
 
 class Doc2VecProcessing:
-    def __init__(self, training_directory: str, test_directory: str, document_or_sentences = 'document'):
+    def __init__(self, training_directory: str, test_directory: str, document_or_sentences='document', lemmatize_or_stemming='lemmatize'):
         self.preprocessing = Preprocessing()
+        self.lemmatize_or_stemming = lemmatize_or_stemming
         self.training_directory = training_directory
         self.test_directory = test_directory
+        # Dictionary to store the original document and the sentence number to retrieve them later
+        self.model_dictionary = {}
         self.document_or_sentences = document_or_sentences
         if self.document_or_sentences == 'document':
             self.train_corpus = list(self.__read_corpus(training_directory))
@@ -20,7 +23,7 @@ class Doc2VecProcessing:
             self.test_corpus = list(self.__read_corpus_sentences(test_directory, tokens_only=True))
         self.model = None
 
-    def train_model(self, vector_size: int = 50, min_count: int = 2, epochs: int = 80):
+    def train_model(self, vector_size: int = 25, min_count: int = 2, epochs: int = 130):
         self.model = gensim.models.doc2vec.Doc2Vec(vector_size=vector_size, min_count=min_count, epochs=epochs)
         # Get all the unique words from all texts
         self.model.build_vocab(self.train_corpus)
@@ -45,7 +48,7 @@ class Doc2VecProcessing:
         for file_name in os.listdir(f'../{directory}'):
             with open(f'../{directory}/{file_name}', 'r', encoding='ISO-8859-1') as file:
                 if ".txt" in file_name:
-                    tokens = self.preprocessing.transform_prompt(" ".join(file.readlines()))
+                    tokens = self.preprocessing.transform_prompt(" ".join(file.readlines()), lemmatize_or_stemming=self.lemmatize_or_stemming)
                     if tokens_only:
                         document_tags.append(tokens)
                     else:
@@ -54,19 +57,23 @@ class Doc2VecProcessing:
 
     def __read_corpus_sentences(self, directory, tokens_only: bool = False):
         document_tags = []
+        unique_id = 0
         for file_name in os.listdir(f'../{directory}'):
             with open(f'../{directory}/{file_name}', 'r', encoding='ISO-8859-1') as file:
                 if ".txt" in file_name:
-                    count = 1
+                    line_number = 1
                     lines = " ".join(file.readlines())
-                    sentences = lines.split('.')
+                    sentences = sent_tokenize(lines)
                     for line in sentences:
-                        tokens = self.preprocessing.transform_prompt(line)
+                        tokens = self.preprocessing.transform_prompt(line, lemmatize_or_stemming=self.lemmatize_or_stemming)
                         if tokens_only:
                             document_tags.append(tokens)
                         else:
-                            document_tags.append(gensim.models.doc2vec.TaggedDocument(tokens, [f"{file_name}: {count}"]))
-                        count += 1
+                            document_tags.append(gensim.models.doc2vec.TaggedDocument(tokens, [unique_id]))
+                            # add to dictionary for later use
+                            self.model_dictionary[unique_id] = [file_name, line_number, line]
+                            line_number += 1
+                            unique_id += 1
         return document_tags
 
     # Pick a random test file from the given tests
@@ -85,7 +92,7 @@ class Doc2VecProcessing:
     #
     def __get_most_similar_documents(self, document_directory, threshhold=0.6):
         with open(document_directory, 'r', encoding='ISO-8859-1') as file:
-            tokens = self.preprocessing.transform_prompt(" ".join(file.readlines()))
+            tokens = self.preprocessing.transform_prompt(" ".join(file.readlines()), lemmatize_or_stemming=self.lemmatize_or_stemming)
         inferred_vector = self.model.infer_vector(tokens)
         most_similar = self.model.dv.most_similar([inferred_vector], topn=len(self.model.dv))
 
@@ -100,27 +107,42 @@ class Doc2VecProcessing:
         tokens_of_sentences = []
         with open(document_directory, 'r', encoding='ISO-8859-1') as file:
             lines = " ".join(file.readlines())
-            sentences = lines.split('.')[:-1]
+            sentences = sent_tokenize(lines)
+            count = 0
             for sentence in sentences:
-                tokens_of_sentences.append(self.preprocessing.transform_prompt(sentence))
+                count += 1
+                # list containing the original sentence and the altered sentence
+                tokens_of_sentences.append([sentence, self.preprocessing.transform_prompt(sentence, lemmatize_or_stemming=self.lemmatize_or_stemming)])
 
+        # list to store [sentence, most_similar_sentence_cosine_similarity, most_similar_sentence_file_name,
+        # most_similar_sentence_line_number, most_similar_sentence_text]
+        most_similar_sentences = [[]]
         for tokens in tokens_of_sentences:
-            if tokens:
-                inferred_vector = self.model.infer_vector(tokens)
+            if tokens[1]:
+                inferred_vector = self.model.infer_vector(tokens[1])
                 most_similar = self.model.dv.most_similar([inferred_vector], topn=1)
-                print(f"sentence: {' '.join(tokens)}, most_similar: {most_similar}")
+                most_similar_sentences.append([tokens[0],
+                                               most_similar[0][1],
+                                               self.model_dictionary[most_similar[0][0]][0],
+                                               self.model_dictionary[most_similar[0][0]][1],
+                                               self.model_dictionary[most_similar[0][0]][2]])
 
+        return most_similar_sentences
+
+    # Cosine similarity
     def get_most_similar_objects(self, document_directory):
         if self.document_or_sentences == 'document':
-            self.__get_most_similar_documents(document_directory)
+            return self.__get_most_similar_documents(document_directory)
         elif self.document_or_sentences == 'sentences':
-            self.__get_most_similar_document_sentences(document_directory)
+            return self.__get_most_similar_document_sentences(document_directory)
 
 
 if __name__ == '__main__':
     doc2vec = Doc2VecProcessing(training_directory='training_data',
                                 test_directory='test_data',
-                                document_or_sentences='sentences')
+                                document_or_sentences='document',
+                                lemmatize_or_stemming='lemmatize')
+                                # lemmatize presents way better results)
     doc2vec.train_model()
     # print(doc2vec.get_cosine_similarity_two_sentences(['this', 'study', 'provided', 'data'],
     # ['this', 'work', 'provides', 'data']))
@@ -128,5 +150,10 @@ if __name__ == '__main__':
     #                                                   'this study provides data'))
     # doc2vec.test_model()
     # print(doc2vec.get_score(['Artificial Intelligence is smart']))
-    # print(doc2vec.get_most_similar_documents('../test_data/FID-05.txt', 0.5))
-    print(doc2vec.get_most_similar_objects('../test_data/FID-01.txt'))
+    print(doc2vec.get_most_similar_objects('../test_data/FID-10.txt'))
+    # lista = doc2vec.get_most_similar_objects('../test_data/FID-11-mine.txt')
+    # for l in lista:
+    #     print(l)
+    # TODO: aSK THE TEACHER IF ITS ONLY FOR A WHOLE DOCUMENT OR SENTENCE BY SENTENCE AND EVALUATE WITH DOCUMENTS BECAUSE IM GETTING POOR RESULTS PARAPHRASING THE SENTENCES
+    # GETTING GOOD RESULTS WITH DOCUMENT SIMILARITY
+    # TODO: MAYBE IMPLEMENT A NEW MODEL FOR DOCUMENTS WHERE IT IS TRAINGED ONLY BY THE SENTENCES IN THE MOST SIMILAR DOCUMENTS???? I DONT THINK THERE IS ENOUGH DATA
