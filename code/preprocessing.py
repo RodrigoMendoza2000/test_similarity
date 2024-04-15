@@ -39,25 +39,25 @@ class Preprocessing:
     # un-tokenized text. Also an option to decide if the text will be lemmatized or stemmed
     def transform_prompt(self, prompt, tokenize=True, lemmatize_or_stemming='lemmatize'):
         self.prompt = prompt.lower()
-        self.convert_to_numeric()
-        self.replace_words()
+        self.__convert_to_numeric()
+        self.__replace_words()
         # print(self.prompt)
-        self.remove_stopwords()
-        self.strip_formatting()
+        self.__remove_stopwords()
+        self.__strip_formatting()
         if lemmatize_or_stemming == 'lemmatize':
-            self.lemmatize_prompt()
+            self.__lemmatize_prompt()
         else:
-            self.stem_prompt()
+            self.__stem_prompt()
         if tokenize:
-            self.tokenize()
+            self.__tokenize()
 
         return self.prompt
 
-    def tokenize(self):
+    def __tokenize(self):
         self.prompt = word_tokenize(self.prompt)
 
     # remove special characters and certain patterns.
-    def strip_formatting(self):
+    def __strip_formatting(self):
         replace_to_blank = [
             EMAIL_PATTERN,
             MENTION_PATTERN,
@@ -72,11 +72,11 @@ class Preprocessing:
         for pattern in replace_to_blank:
             self.prompt = pattern.sub("", self.prompt)
 
-    def stem_prompt(self):
+    def __stem_prompt(self):
         stemmer = SnowballStemmer("english")
         self.prompt = stemmer.stem(self.prompt)
 
-    def lemmatize_prompt(self):
+    def __lemmatize_prompt(self):
         wnl = WordNetLemmatizer()
         words = re.findall(r"\w+", self.prompt)
 
@@ -86,7 +86,7 @@ class Preprocessing:
             ]
         )
 
-    def remove_stopwords(self):
+    def __remove_stopwords(self):
         words = re.findall(r"\w+", self.prompt)
         important_words = (
             word for word in words if word not in ENGLISH_STOPWORDS
@@ -94,7 +94,7 @@ class Preprocessing:
         self.prompt = " ".join(important_words)
 
     # Convert all numbers to their word format ex. 42 -> forty-two
-    def convert_to_numeric(self):
+    def __convert_to_numeric(self):
         new_prompt = []
         words = re.findall(r"\w+", self.prompt)
         for word in words:
@@ -106,7 +106,7 @@ class Preprocessing:
         self.prompt = " ".join(new_prompt)
 
     # Replace certain words into other words defined in list_of_replaces.txt ex. AI -> Artificial intelligence
-    def replace_words(self):
+    def __replace_words(self):
         word_replaces = {}
         with open("list_of_replaces.txt", 'r') as file:
             for line in file:
