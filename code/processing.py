@@ -6,7 +6,7 @@ from nltk.tokenize import sent_tokenize
 import random
 
 
-class Doc2VecProcessing:
+class Processing:
     """
         Class for processing text data and training Doc2Vec
         models to detect plagiarism.
@@ -61,6 +61,16 @@ class Doc2VecProcessing:
             lemmatize_or_stemming (str, optional):
                 Preprocessing method, either 'lemmatize' or 'stemming'.
         """
+        if document_or_sentences not in ['document', 'sentences']:
+            raise ValueError(
+                "Invalid value for document_or_sentences. "
+                "Possible values: 'document', 'sentences'"
+            )
+        if lemmatize_or_stemming not in ['lemmatize', 'stemming']:
+            raise ValueError(
+                "Invalid value for lemmatize_or_stemming. "
+                "Possible values: 'lemmatize', 'stemming'"
+            )
         self.preprocessing = Preprocessing()
         self.lemmatize_or_stemming = lemmatize_or_stemming
         self.training_directory = training_directory
@@ -123,9 +133,11 @@ class Doc2VecProcessing:
         """
         # Preprocess parameters for more accurate similarity
         sentence1 = self.preprocessing.transform_prompt(sentence1)
+        sentence1_tokenized = self.preprocessing.tokenize(sentence1)
         sentence2 = self.preprocessing.transform_prompt(sentence2)
-        vector1 = self.model.infer_vector(sentence1)
-        vector2 = self.model.infer_vector(sentence2)
+        sentence2_tokenized = self.preprocessing.tokenize(sentence2)
+        vector1 = self.model.infer_vector(sentence1_tokenized)
+        vector2 = self.model.infer_vector(sentence2_tokenized)
 
         cosine_similarity = pairwise.cosine_similarity([vector1, vector2])
         return cosine_similarity
@@ -150,14 +162,15 @@ class Doc2VecProcessing:
                 otherwise a list of document tokens.
         """
         document_tags = []
-        for file_name in os.listdir(f'../{directory}'):
-            with open(f'../{directory}/{file_name}', 'r',
+        for file_name in os.listdir(f'{directory}'):
+            with open(f'{directory}/{file_name}', 'r',
                       encoding='ISO-8859-1') as file:
                 if ".txt" in file_name:
-                    tokens = self.preprocessing.transform_prompt(
+                    text_preprocessed = self.preprocessing.transform_prompt(
                         " ".join(file.readlines()),
                         lemmatize_or_stemming=self.lemmatize_or_stemming
                     )
+                    tokens = self.preprocessing.tokenize(text_preprocessed)
                     if tokens_only:
                         document_tags.append(tokens)
                     else:
@@ -184,8 +197,8 @@ class Doc2VecProcessing:
         """
         document_tags = []
         unique_id = 0
-        for file_name in os.listdir(f'../{directory}'):
-            with open(f'../{directory}/{file_name}',
+        for file_name in os.listdir(f'{directory}'):
+            with open(f'{directory}/{file_name}',
                       'r',
                       encoding='ISO-8859-1') as file:
                 if ".txt" in file_name:
@@ -193,10 +206,14 @@ class Doc2VecProcessing:
                     lines = " ".join(file.readlines())
                     sentences = sent_tokenize(lines)
                     for line in sentences:
-                        tokens = self.preprocessing.transform_prompt(
-                            line,
-                            lemmatize_or_stemming=self.lemmatize_or_stemming
-                        )
+                        sentence_preprocessed = \
+                            self.preprocessing.transform_prompt(
+                                line,
+                                lemmatize_or_stemming=
+                                self.lemmatize_or_stemming
+                            )
+                        tokens = \
+                            self.preprocessing.tokenize(sentence_preprocessed)
                         if tokens_only:
                             document_tags.append(tokens)
                         else:
@@ -237,10 +254,10 @@ class Doc2VecProcessing:
             # ' '.join(self.train_corpus[most_similar[index][0]].words)))
             print(f"{label} {most_similar[index]}")
 
-    def __get_most_similar_documents(self,
-                                     document_directory,
-                                     threshhold=0.6,
-                                     topn=3) -> dict:
+    def get_most_similar_documents(self,
+                                   document_directory,
+                                   threshhold=0.6,
+                                   topn=3) -> dict:
         """
         Get the most similar documents to the input document.
 
@@ -256,11 +273,16 @@ class Doc2VecProcessing:
                 cosine similarities. Keys are document indices and values are
                 cosine similarity scores.
         """
+        if self.document_or_sentences != 'document':
+            raise Exception('To use this function the model must be set '
+                            'to document')
+
         with open(document_directory, 'r', encoding='ISO-8859-1') as file:
-            tokens = self.preprocessing.transform_prompt(
+            text_preprocessed = self.preprocessing.transform_prompt(
                 " ".join(file.readlines()),
                 lemmatize_or_stemming=self.lemmatize_or_stemming
             )
+            tokens = self.preprocessing.tokenize(text_preprocessed)
         inferred_vector = self.model.infer_vector(tokens)
         most_similar = self.model.dv.most_similar([inferred_vector], topn=topn)
 
@@ -271,7 +293,8 @@ class Doc2VecProcessing:
 
         return dict_of_similar_documents
 
-    def __get_most_similar_document_sentences(self, document_directory):
+    def get_most_similar_document_sentences(self,
+                                            document_directory) -> list:
         """
         Get the most similar sentences to each sentence in the input document.
 
@@ -284,6 +307,10 @@ class Doc2VecProcessing:
                   [original_sentence, cosine_similarity, file_name,
                   sentence_number, similar_sentence_text]
         """
+        if self.document_or_sentences != 'sentences':
+            raise Exception('To use this function the model must be set '
+                            'to sentences')
+
         tokens_of_sentences = []
         with open(document_directory, 'r', encoding='ISO-8859-1') as file:
             lines = " ".join(file.readlines())
@@ -295,10 +322,10 @@ class Doc2VecProcessing:
                 # the altered sentence
                 tokens_of_sentences.append([
                     sentence,
-                    self.preprocessing.transform_prompt(
+                    self.preprocessing.tokenize(self.preprocessing.transform_prompt(
                         sentence,
                         lemmatize_or_stemming=self.lemmatize_or_stemming
-                    )
+                    ))
                 ])
 
         most_similar_sentences = [[]]
@@ -334,8 +361,10 @@ class Doc2VecProcessing:
                 Defaults to 3.
 
         Returns:
-            dict: Dictionary containing the most similar documents or sentences.
-            list: List containing the most similar sentences.
+            dict:
+                Dictionary containing the most similar documents or sentences.
+            list:
+                List containing the most similar sentences.
         """
         if self.document_or_sentences == 'document':
             return self.__get_most_similar_documents(document_directory,
@@ -347,11 +376,11 @@ class Doc2VecProcessing:
 
 
 if __name__ == '__main__':
-    doc2vec = Doc2VecProcessing(training_directory='training_data',
-                                test_directory='test_data',
-                                document_or_sentences='document',
-                                lemmatize_or_stemming='lemmatize')
+    doc2vec = Processing(training_directory='../training_data',
+                         test_directory='../test_data',
+                         document_or_sentences='document',
+                         lemmatize_or_stemming='lemmatize')
     # lemmatize presents way better results)
     doc2vec.train_model()
-    print(doc2vec.get_most_similar_objects('../test_data/FID-07.txt', 0.3, 30))
+    print(doc2vec.get_most_similar_documents('../test_data/FID-07.txt'))
     # lista = doc2vec.get_most_similar_objects('../test_data/FID-11-mine.txt')

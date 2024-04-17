@@ -74,9 +74,13 @@ class Preprocessing:
 
     def transform_prompt(self,
                          prompt: str,
-                         tokenize: bool = True,
                          lemmatize_or_stemming: str = 'lemmatize'
-                         ) -> list[str]:
+                         ) -> str:
+        if lemmatize_or_stemming not in ['lemmatize', 'stem']:
+            raise ValueError(
+                "Invalid value for lemmatize_or_stemming. "
+                "Possible values: 'lemmatize', 'stem'"
+            )
         self.prompt = prompt.lower()
         # self.__convert_to_numeric()
         self.__replace_words()
@@ -85,15 +89,13 @@ class Preprocessing:
         self.__strip_formatting()
         if lemmatize_or_stemming == 'lemmatize':
             self.__lemmatize_prompt()
-        else:
+        elif lemmatize_or_stemming == 'stem':
             self.__stem_prompt()
-        if tokenize:
-            self.__tokenize()
 
         return self.prompt
 
-    def __tokenize(self) -> None:
-        self.prompt = word_tokenize(self.prompt)
+    def tokenize(self, prompt: str) -> list[str]:
+        return word_tokenize(prompt)
 
     def __strip_formatting(self) -> None:
         replace_to_blank = [
