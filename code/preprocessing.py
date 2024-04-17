@@ -6,6 +6,7 @@ from nltk.stem import WordNetLemmatizer
 import inflect
 import num2words
 from nltk.tokenize import word_tokenize
+from nltk.tokenize import sent_tokenize
 
 download('punkt', quiet=True)
 download('stopwords', quiet=True)
@@ -15,8 +16,6 @@ ENGLISH_STOPWORDS = stopwords.words("english")
 EMAIL_PATTERN = re.compile(r"\S*@\S*\s?")
 MENTION_PATTERN = re.compile(r"@\S*\s?")
 URL_PATTERN = re.compile(r"http\S+|www.\S+")
-# symbols_punctuations_pattern = re.compile(r'\?|\\|\!|\"|\#|\$|\%|\&|\'|\[|\^|\||\,|\¿|\¡|\_|\=|\>|\[|\^|\`|\{
-# |\}|\~|\[|\]|\*|\+|\@|\/|\-|\:|\?|\¡|\¿||\.|\\|\“|\”|\(|\)|\;|\’|\;|\`|\´|\-|\·|\<|\º|\ª')
 SYMBOL_PATTERN = re.compile(r"[^\w\sñ]")
 SPECIAL_CASE_1 = re.compile(r"\nd")
 SPECIAL_CASE_2 = re.compile(r"\n")
@@ -31,15 +30,55 @@ ALPHA_NUMERIC_PATTERN = re.compile(r"[^a-zA-Z\d|\s|ñ]")
 
 
 class Preprocessing:
+    """
+        A class for text preprocessing tasks including removal of stopwords,
+        stemming/lemmatization, formatting removal, and tokenization.
+
+        Attributes:
+            prompt (str): The text to be preprocessed.
+
+        Methods:
+            transform_prompt(prompt, tokenize=True, lemmatize_or_stemming='lemmatize'):
+                Performs all preprocessing steps on the given text.
+                Arguments:
+                    prompt (str): The text to be preprocessed.
+                    tokenize (bool): Whether to tokenize the text or not.
+                    lemmatize_or_stemming (str): The method to use for lemmatization or stemming.
+                        Possible values: 'lemmatize', 'stem'
+
+            __tokenize():
+                Tokenizes the text.
+
+            __strip_formatting():
+                Removes special characters and certain patterns from the text.
+
+            __stem_prompt():
+                Stems the text using SnowballStemmer.
+
+            __lemmatize_prompt():
+                Lemmatizes the text using WordNetLemmatizer.
+
+            __remove_stopwords():
+                Removes stopwords from the text.
+
+            __convert_to_numeric():
+                Converts all numbers to their word format.
+
+            __replace_words():
+                Replaces certain words with other words defined in a file.
+                ex. AI -> Artificial intelligence
+    """
 
     def __init__(self):
         self.prompt = ""
 
-    # Performs all preprocessing steps with an option to tokenize the text and return a list or to return the full
-    # un-tokenized text. Also an option to decide if the text will be lemmatized or stemmed
-    def transform_prompt(self, prompt, tokenize=True, lemmatize_or_stemming='lemmatize'):
+    def transform_prompt(self,
+                         prompt: str,
+                         tokenize: bool = True,
+                         lemmatize_or_stemming: str = 'lemmatize'
+                         ) -> list[str]:
         self.prompt = prompt.lower()
-        self.__convert_to_numeric()
+        # self.__convert_to_numeric()
         self.__replace_words()
         # print(self.prompt)
         self.__remove_stopwords()
@@ -53,11 +92,10 @@ class Preprocessing:
 
         return self.prompt
 
-    def __tokenize(self):
+    def __tokenize(self) -> None:
         self.prompt = word_tokenize(self.prompt)
 
-    # remove special characters and certain patterns.
-    def __strip_formatting(self):
+    def __strip_formatting(self) -> None:
         replace_to_blank = [
             EMAIL_PATTERN,
             MENTION_PATTERN,
@@ -72,11 +110,11 @@ class Preprocessing:
         for pattern in replace_to_blank:
             self.prompt = pattern.sub("", self.prompt)
 
-    def __stem_prompt(self):
+    def __stem_prompt(self) -> None:
         stemmer = SnowballStemmer("english")
         self.prompt = stemmer.stem(self.prompt)
 
-    def __lemmatize_prompt(self):
+    def __lemmatize_prompt(self) -> None:
         wnl = WordNetLemmatizer()
         words = re.findall(r"\w+", self.prompt)
 
@@ -86,7 +124,7 @@ class Preprocessing:
             ]
         )
 
-    def __remove_stopwords(self):
+    def __remove_stopwords(self) -> None:
         words = re.findall(r"\w+", self.prompt)
         important_words = (
             word for word in words if word not in ENGLISH_STOPWORDS
@@ -94,7 +132,7 @@ class Preprocessing:
         self.prompt = " ".join(important_words)
 
     # Convert all numbers to their word format ex. 42 -> forty-two
-    def __convert_to_numeric(self):
+    def __convert_to_numeric(self) -> None:
         new_prompt = []
         words = re.findall(r"\w+", self.prompt)
         for word in words:
@@ -105,8 +143,7 @@ class Preprocessing:
 
         self.prompt = " ".join(new_prompt)
 
-    # Replace certain words into other words defined in list_of_replaces.txt ex. AI -> Artificial intelligence
-    def __replace_words(self):
+    def __replace_words(self) -> None:
         word_replaces = {}
         with open("list_of_replaces.txt", 'r') as file:
             for line in file:
@@ -116,18 +153,32 @@ class Preprocessing:
                 word_replaces[key] = val
         for replace_from, replace_to in word_replaces.items():
             # print(replace_from, ' ', replace_to)
-            self.prompt = re.sub(r"\b"+replace_from+r"\b", replace_to, self.prompt)
+            self.prompt = re.sub(r"\b" + replace_from + r"\b", replace_to,
+                                 self.prompt)
 
 
 if __name__ == "__main__":
-    text = r"Artificial intelligence (AI) mirrors human intelligence by enabling machines to execute tasks " \
-           "traditionally handled by humans, leveraging technologies like machine learning and neural networks. While " \
-           "AI systems can adapt and improve through learning, concerns persist regarding ethical implications such " \
-           "as privacy infringement and biases in decision-making. 42 As AI continues to evolve, responsible " \
-           "development practices become imperative to navigate its societal impact. \n Hello"
+    text = r"Artificial intelligence (AI) mirrors human intelligence by " \
+           r"enabling machines to execute tasks " \
+           "traditionally handled by humans, leveraging technologies like " \
+           "machine learning and neural networks. While " \
+           "AI systems can adapt and improve through learning, concerns " \
+           "persist regarding ethical implications such " \
+           "as privacy infringement and biases in decision-making. 42 As AI " \
+           "continues to evolve, responsible " \
+           "development practices become imperative to navigate its " \
+           " societal impact."
 
     preprocesser = Preprocessing()
 
     new_text = preprocesser.transform_prompt(text, True)
 
     print(new_text)
+
+    with open(f'../training_data/org-007.txt', 'r',
+              encoding='ISO-8859-1') as file:
+        line_number = 1
+        lines = " ".join(file.readlines())
+        sentences = sent_tokenize(lines)
+        for sentence in sentences:
+            print(preprocesser.transform_prompt(sentence, True, 'lemmatize'))
