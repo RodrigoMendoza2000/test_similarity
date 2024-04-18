@@ -328,7 +328,7 @@ class Processing:
                     ))
                 ])
 
-        most_similar_sentences = [[]]
+        most_similar_sentences = []
         for tokens in tokens_of_sentences:
             if tokens[1]:
                 inferred_vector = self.model.infer_vector(tokens[1])
@@ -378,9 +378,9 @@ class Processing:
 if __name__ == '__main__':
     doc2vec = Processing(training_directory='../training_data',
                          test_directory='../test_data',
-                         document_or_sentences='document',
+                         document_or_sentences='sentences',
                          lemmatize_or_stemming='lemmatize')
     # lemmatize presents way better results)
     doc2vec.train_model()
-    print(doc2vec.get_most_similar_documents('../test_data/FID-07.txt'))
+    print(doc2vec.get_most_similar_document_sentences('../test_data/FID-10.txt'))
     # lista = doc2vec.get_most_similar_objects('../test_data/FID-11-mine.txt')
