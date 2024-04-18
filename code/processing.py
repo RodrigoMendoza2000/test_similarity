@@ -345,34 +345,14 @@ class Processing:
 
         return most_similar_sentences
 
-    # Cosine similarity
-    def get_most_similar_objects(self, document_directory, threshhold=0.6,
-                                 topn=3):
-        """
-        Get the most similar documents or sentences to the input document.
+    def get_training_results(self) -> dict:
+        testing_results = {}
+        for file in os.listdir(self.test_directory):
+            testing_results[file] = self.get_most_similar_document_sentences(
+                f"{self.test_directory}/{file}"
+            )
 
-        Args:
-            document_directory (str):
-                Path to the input document.
-            threshhold (float, optional):
-                Minimum cosine similarity threshold. Defaults to 0.6.
-            topn (int, optional):
-                Number of most similar documents or sentences to return.
-                Defaults to 3.
-
-        Returns:
-            dict:
-                Dictionary containing the most similar documents or sentences.
-            list:
-                List containing the most similar sentences.
-        """
-        if self.document_or_sentences == 'document':
-            return self.__get_most_similar_documents(document_directory,
-                                                     threshhold=threshhold,
-                                                     topn=topn)
-        elif self.document_or_sentences == 'sentences':
-            return self.__get_most_similar_document_sentences(
-                document_directory)
+        return testing_results
 
 
 if __name__ == '__main__':
@@ -381,6 +361,7 @@ if __name__ == '__main__':
                          document_or_sentences='sentences',
                          lemmatize_or_stemming='lemmatize')
     # lemmatize presents way better results)
-    doc2vec.train_model()
-    print(doc2vec.get_most_similar_document_sentences('../test_data/FID-10.txt'))
+    # doc2vec.train_model()
+    # print(doc2vec.get_most_similar_document_sentences('../test_data/FID-10.txt'))
+    doc2vec.testing_data()
     # lista = doc2vec.get_most_similar_objects('../test_data/FID-11-mine.txt')
