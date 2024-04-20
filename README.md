@@ -6,11 +6,13 @@ This project is a Python-based application that uses Doc2Vec, a machine learning
 
 ## Project Overview
 
-The project consists of two main components:
+The project consists of three main components:
 
-1. **Processing**: This component is responsible for training the Doc2Vec model on a given set of training data. It also provides functionality to retrieve the most similar sentences from a given document.
+1. **Preprocessing**: This component is responible of cleaning all of our data and is used as a first step to prepare the data for the Doc2Vec model.
 
-2. **Decision**: This component uses the output from the Processing component to make decisions about whether a text is plagiarized or not. It calculates a confusion matrix and the AUC to evaluate the performance of the model.
+2. **Processing**: This component is responsible for training the Doc2Vec model on a given set of training data. It also provides functionality to retrieve the most similar sentences from a given document.
+
+3. **Decision**: This component uses the output from the Processing component to make decisions about whether a text is plagiarized or not. It calculates a confusion matrix and the AUC to evaluate the performance of the model.
 
 ## Getting Started
 
