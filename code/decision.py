@@ -81,7 +81,7 @@ class Decision:
             display_text += "PLAGIARISM NOT DETECTED\n\n"
 
         for index, row in df.iterrows():
-            if row['cosine_score'] < self.cosine_similarity_threshhold:
+            if row['cosine_score'] > self.cosine_similarity_threshhold:
                 display_text += f"Plagiarized Sentence: " \
                                 f"{row['sentence']} || " \
                                 f"does not " \
