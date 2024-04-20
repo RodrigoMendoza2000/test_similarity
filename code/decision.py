@@ -44,9 +44,9 @@ class Decision:
         self.plagiarism_percentage_threshhold = \
             plagiarism_percentage_threshhold
 
-    def get_plagiarism_sentences(self, processed_list: list) -> str:
-        display_text = ""
-        # TODO: Make this return only if the cosine similarity is bigger than X
+    def get_plagiarism_sentences(self,
+                                 processed_list: list,
+                                 most_similar_documents: dict = {}) -> str:
         """
             Convert a processed list of sentences into a DataFrame.
 
@@ -60,9 +60,11 @@ class Decision:
                     similar_sentence)
 
             Returns:
-                pd.DataFrame: A DataFrame containing the processed sentences
+                string: A DataFrame containing the processed sentences
                     along with their details.
             """
+
+        display_text = ""
         df = pd.DataFrame(processed_list, columns=['sentence',
                                                    'cosine_score',
                                                    'file_name',
@@ -89,7 +91,14 @@ class Decision:
                                 f"'{row['similar_sentence']}'\n\n "
 
         display_text += f"Plagiarism percentage: " \
-            f"\n{self.get_plagiarism_pct_sentences(processed_list)}\n "
+            f"\n{self.get_plagiarism_pct_sentences(processed_list)}\n\n "
+
+        if most_similar_documents != {}:
+            display_text += 'Most similar document(s): \n'
+        for document, similarity in most_similar_documents.items():
+            if similarity > self.cosine_similarity_threshhold:
+                display_text += f"{document} " \
+                                f"with similarity: {round(similarity, 2)}\n"
 
         return display_text
 
@@ -192,11 +201,19 @@ if __name__ == "__main__":
                          lemmatize_or_stemming='lemmatize')
     doc2vec.train_model()
 
+    doc2vecdocuments = Processing(training_directory='../training_data',
+                                  test_directory='../test_data',
+                                  document_or_sentences='document',
+                                  lemmatize_or_stemming='lemmatize')
+    doc2vecdocuments.train_model()
+
+    top = doc2vecdocuments.get_most_similar_documents('../test_data/FID-01.txt')
+
     lst = doc2vec.get_most_similar_document_sentences(
         '../test_data/FID-01.txt')
 
     decision = Decision()
-    print(decision.get_plagiarism_sentences(lst))
+    print(decision.get_plagiarism_sentences(lst, top))
 
     """training_dat = doc2vec.testing_data()
 
