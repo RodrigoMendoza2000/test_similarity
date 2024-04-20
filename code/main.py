@@ -1,6 +1,5 @@
 from processing import Processing
 from decision import Decision, get_auc
-import os
 
 doc2vec = Processing(training_directory='../training_data',
                      test_directory='../test_data',

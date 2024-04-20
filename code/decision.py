@@ -1,31 +1,6 @@
 import pandas as pd
 
 
-def get_plagiarism_sentences(processed_list: list) -> pd.DataFrame:
-    """
-        Convert a processed list of sentences into a DataFrame.
-
-        Args:
-            processed_list (list): A list containing processed sentences.
-            The list must contain tuples with the following format:
-                (sentence,
-                cosine_score,
-                file_name,
-                file_sentence_number,
-                similar_sentence)
-
-        Returns:
-            pd.DataFrame: A DataFrame containing the processed sentences
-                along with their details.
-        """
-    df = pd.DataFrame(processed_list, columns=['sentence',
-                                               'cosine_score',
-                                               'file_name',
-                                               'file_sentence_number',
-                                               'similar_sentence'])
-    return df
-
-
 def get_auc(par_confusion_matrix: dict) -> float:
     """
     Calculate the Area Under the Curve (AUC) for the given confusion matrix.
@@ -61,12 +36,62 @@ class Decision:
                         plagiarized if the percentage of plagiarized content
                         is greater than this threshold.
         """
+
     def __init__(self,
                  cosine_similarity_threshhold=0.7,
                  plagiarism_percentage_threshhold=0.35):
         self.cosine_similarity_threshhold = cosine_similarity_threshhold
         self.plagiarism_percentage_threshhold = \
             plagiarism_percentage_threshhold
+
+    def get_plagiarism_sentences(self, processed_list: list) -> str:
+        display_text = ""
+        # TODO: Make this return only if the cosine similarity is bigger than X
+        """
+            Convert a processed list of sentences into a DataFrame.
+
+            Args:
+                processed_list (list): A list containing processed sentences.
+                The list must contain tuples with the following format:
+                    (sentence,
+                    cosine_score,
+                    file_name,
+                    file_sentence_number,
+                    similar_sentence)
+
+            Returns:
+                pd.DataFrame: A DataFrame containing the processed sentences
+                    along with their details.
+            """
+        df = pd.DataFrame(processed_list, columns=['sentence',
+                                                   'cosine_score',
+                                                   'file_name',
+                                                   'file_sentence_number',
+                                                   'similar_sentence'])
+
+        # df = df.drop(df[df.cosine_score < self.cosine_similarity_threshhold]
+        #              .index)
+
+        if self.is_plagiarism(
+                self.get_plagiarism_pct_sentences(processed_list)):
+            display_text += "PLAGIARISM DETECTED\n\n"
+        else:
+            display_text += "PLAGIARISM NOT DETECTED\n\n"
+
+        for index, row in df.iterrows():
+            if row['cosine_score'] < self.cosine_similarity_threshhold:
+                display_text += f"Sentence: {row['sentence']} || does not " \
+                                f"present plagiarism\n\n "
+            else:
+                display_text += f"Sentence: '{row['sentence']}' || " \
+                                f"presents plagiarism from  " \
+                                f"'{row['file_name']}' sentence " \
+                                f"'{row['similar_sentence']}'\n\n "
+
+        display_text += f"Plagiarism percentage: " \
+            f"\n{self.get_plagiarism_pct_sentences(processed_list)}\n "
+
+        return display_text
 
     def get_plagiarism_pct_sentences(self,
                                      processed_list: list
@@ -167,7 +192,13 @@ if __name__ == "__main__":
                          lemmatize_or_stemming='lemmatize')
     doc2vec.train_model()
 
-    training_dat = doc2vec.testing_data()
+    lst = doc2vec.get_most_similar_document_sentences(
+        '../test_data/FID-01.txt')
+
+    decision = Decision()
+    print(decision.get_plagiarism_sentences(lst))
+
+    """training_dat = doc2vec.testing_data()
 
     dic = {
         'FID-01.txt': True,
@@ -183,10 +214,10 @@ if __name__ == "__main__":
         'FID-11-mine.txt': False,
     }
 
-    decision = Decision()
+    
     confusion_matrix = decision.get_confusion_matrix(training_dat, dic)
 
-    print(get_auc(confusion_matrix))
+    print(get_auc(confusion_matrix))"""
 
     #
     # print(decision.get_plagiarism_pct_sentences(lst))
