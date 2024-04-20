@@ -82,7 +82,9 @@ class Decision:
 
         for index, row in df.iterrows():
             if row['cosine_score'] < self.cosine_similarity_threshhold:
-                display_text += f"Sentence: {row['sentence']} || does not " \
+                display_text += f"Plagiarized Sentence: " \
+                                f"{row['sentence']} || " \
+                                f"does not " \
                                 f"present plagiarism\n\n "
             else:
                 display_text += f"Sentence: '{row['sentence']}' || " \
@@ -91,7 +93,8 @@ class Decision:
                                 f"'{row['similar_sentence']}'\n\n "
 
         display_text += f"Plagiarism percentage: " \
-            f"\n{self.get_plagiarism_pct_sentences(processed_list)}\n\n "
+                        f"\n{self.get_plagiarism_pct_sentences(processed_list)}" \
+                        f"\n\n "
 
         if most_similar_documents != {}:
             display_text += 'Most similar document(s): \n'
@@ -207,7 +210,8 @@ if __name__ == "__main__":
                                   lemmatize_or_stemming='lemmatize')
     doc2vecdocuments.train_model()
 
-    top = doc2vecdocuments.get_most_similar_documents('../test_data/FID-01.txt')
+    top = doc2vecdocuments.get_most_similar_documents(
+        '../test_data/FID-01.txt')
 
     lst = doc2vec.get_most_similar_document_sentences(
         '../test_data/FID-01.txt')
