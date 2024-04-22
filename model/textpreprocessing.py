@@ -7,6 +7,7 @@ import inflect
 import num2words
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import sent_tokenize
+import os
 
 download('punkt', quiet=True)
 download('stopwords', quiet=True)
@@ -84,7 +85,7 @@ class Preprocessing:
         self.prompt = prompt.lower()
         # self.__convert_to_numeric()
         self.__replace_words()
-        # print(self.prompt)
+        # sself.prompt)
         self.__remove_stopwords()
         self.__strip_formatting()
         if lemmatize_or_stemming == 'lemmatize':
@@ -147,7 +148,8 @@ class Preprocessing:
 
     def __replace_words(self) -> None:
         word_replaces = {}
-        with open("list_of_replaces.txt", 'r') as file:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'list_of_replaces.txt')
+        with open(path, 'r') as file:
             for line in file:
                 line_splitted = line.split()
                 key = line_splitted[0]
@@ -157,6 +159,7 @@ class Preprocessing:
             # print(replace_from, ' ', replace_to)
             self.prompt = re.sub(r"\b" + replace_from + r"\b", replace_to,
                                  self.prompt)
+
 
 
 if __name__ == "__main__":
@@ -173,7 +176,7 @@ if __name__ == "__main__":
 
     preprocesser = Preprocessing()
 
-    new_text = preprocesser.transform_prompt(text, True)
+    new_text = preprocesser.transform_prompt(text)
 
     print(new_text)
 
@@ -183,4 +186,4 @@ if __name__ == "__main__":
         lines = " ".join(file.readlines())
         sentences = sent_tokenize(lines)
         for sentence in sentences:
-            print(preprocesser.transform_prompt(sentence, True, 'lemmatize'))
+            print(preprocesser.transform_prompt(sentence))

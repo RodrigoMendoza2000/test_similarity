@@ -1,7 +1,6 @@
 import os
 import gensim
 from sklearn.metrics import pairwise
-from preprocessing import Preprocessing
 from nltk.tokenize import sent_tokenize
 import random
 
@@ -356,12 +355,19 @@ class Processing:
 
 
 if __name__ == '__main__':
+    from textpreprocessing import Preprocessing
+
     doc2vec = Processing(training_directory='../training_data',
                          test_directory='../test_data',
                          document_or_sentences='sentences',
                          lemmatize_or_stemming='lemmatize')
+    
+    doc2vec.train_model()
+
     # lemmatize presents way better results)
     # doc2vec.train_model()
-    # print(doc2vec.get_most_similar_document_sentences('../test_data/FID-10.txt'))
-    doc2vec.testing_data()
+    # print(doc2vec.get_most_similar_documents('../test_data/org-090.txt'))
+    # doc2vec.testing_data()
     # lista = doc2vec.get_most_similar_objects('../test_data/FID-11-mine.txt')
+else:
+    from model.textpreprocessing import Preprocessing
