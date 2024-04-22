@@ -1,3 +1,10 @@
+# ---------------------------------------------------------------
+# Processing class
+# Authors: Rodrigo Alfredo Mendoza España
+#          Antonio Oviedo Paredes
+# Last modified: 21/04/2024
+# ---------------------------------------------------------------
+
 import os
 import gensim
 from sklearn.metrics import pairwise
@@ -359,7 +366,7 @@ if __name__ == '__main__':
 
     doc2vec = Processing(training_directory='../training_data',
                          test_directory='../test_data',
-                         document_or_sentences='sentences',
+                         document_or_sentences='document',
                          lemmatize_or_stemming='lemmatize')
     
     doc2vec.train_model()

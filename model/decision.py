@@ -1,5 +1,11 @@
-import pandas as pd
+# ---------------------------------------------------------------
+# Decision class
+# Authors: Diego Yunoe Sierra Díaz
+#          Rodrigo Alfredo Mendoza España
+# Last modified: 20/04/2024
+# ---------------------------------------------------------------
 
+import pandas as pd
 
 def get_auc(par_confusion_matrix: dict) -> float:
     """
@@ -219,6 +225,12 @@ if __name__ == "__main__":
     decision = Decision()
     print(decision.get_plagiarism_sentences(lst, top))
     print(decision.get_plagiarism_pct_sentences(lst))
+
+    for i in range(1, 11):
+        doc = f'../test_data/FID-{i:02}.txt'
+        lst = doc2vec.get_most_similar_document_sentences(doc)
+        print(doc, decision.get_plagiarism_pct_sentences(lst))
+
 
     """training_dat = doc2vec.testing_data()
 
