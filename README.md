@@ -1,4 +1,4 @@
-# test_similarity
+# Text_similarity
 
 # Text Similarity Detection Project
 
