@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------
-# Processing class testing
+# Decision class testing
 # Author: Antonio Oviedo Paredes
 # Last modified: 21/04/2024
 # ---------------------------------------------------------------
