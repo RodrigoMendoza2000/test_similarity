@@ -1,3 +1,9 @@
+# ---------------------------------------------------------------
+# Main test file
+# Author: Rodrigo Alfredo Mendoza España
+# Last modified: 21/04/2024
+# ---------------------------------------------------------------
+
 from model.processing import Processing
 from model.decision import Decision, get_auc
 
@@ -62,4 +68,5 @@ confusion_matrix = decision.get_confusion_matrix(training_results,
                                                  validation_dictionary)
 
 auc = get_auc(confusion_matrix)
+print(confusion_matrix)
 print(auc)

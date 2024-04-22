@@ -1,3 +1,9 @@
+# ---------------------------------------------------------------
+# Processing class testing
+# Author: Diego Yunoe Sierra Díaz
+# Last modified: 21/04/2024
+# ---------------------------------------------------------------
+
 from unittest import TestCase
 from model.textpreprocessing import Preprocessing
 from model.decision import Decision

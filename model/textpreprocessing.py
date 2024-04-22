@@ -1,3 +1,9 @@
+# ---------------------------------------------------------------
+# Preporcessing class
+# Author: Diego Yunoe Sierra Díaz
+# Last modified: 21/04/2024
+# ---------------------------------------------------------------
+
 from nltk.corpus import stopwords
 from nltk import download
 from nltk.stem import SnowballStemmer
