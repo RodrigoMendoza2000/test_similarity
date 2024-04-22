@@ -163,7 +163,7 @@ class Decision:
         Args:
             processed_files (dict): A dictionary containing processed files.
                 This processed files may be obtained from Processing
-                class, testing_data() method.
+                class, get_training_results() method.
             original_files (dict): A dictionary containing original files.
 
         Returns:
@@ -211,13 +211,14 @@ if __name__ == "__main__":
     doc2vecdocuments.train_model()
 
     top = doc2vecdocuments.get_most_similar_documents(
-        '../test_data/FID-01.txt')
+        '../test_data/FID-02.txt')
 
     lst = doc2vec.get_most_similar_document_sentences(
-        '../test_data/FID-01.txt')
+        '../test_data/FID-02.txt')
 
     decision = Decision()
     print(decision.get_plagiarism_sentences(lst, top))
+    print(decision.get_plagiarism_pct_sentences(lst))
 
     """training_dat = doc2vec.testing_data()
 

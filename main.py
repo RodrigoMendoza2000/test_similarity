@@ -1,16 +1,16 @@
-from processing import Processing
-from decision import Decision, get_auc
+from model.processing import Processing
+from model.decision import Decision, get_auc
 
-doc2vec = Processing(training_directory='../training_data',
-                     test_directory='../test_data',
+doc2vec = Processing(training_directory='./training_data',
+                     test_directory='./test_data',
                      document_or_sentences='sentences',
                      lemmatize_or_stemming='lemmatize')
 
 doc2vec.train_model()
 training_results = doc2vec.get_training_results()
 
-doc2vec_documents = Processing(training_directory='../training_data',
-                               test_directory='../test_data',
+doc2vec_documents = Processing(training_directory='./training_data',
+                               test_directory='./test_data',
                                document_or_sentences='document',
                                lemmatize_or_stemming='lemmatize')
 doc2vec_documents.train_model()
