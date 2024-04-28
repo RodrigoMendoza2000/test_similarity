@@ -179,7 +179,8 @@ class Decision:
                     suspicious_documents.append(file_name)
                     plagiarism_type.append(identify_text_change(
                                                                 read_file('./training_data/' + original_file),
-                                                                read_file('./test_data/' + file_name)))
+                                                                read_file('./test_data/' + file_name),
+                                                                cosine_similarity))
                     # plagiarism_type.append('')
                     similar_document.append(original_file)
                     copy.append('Si')

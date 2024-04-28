@@ -1,6 +1,6 @@
 import difflib
 import nltk
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize, sent_tokenize
 
 nltk.download('averaged_perceptron_tagger', quiet=True)
 
@@ -54,40 +54,58 @@ def identify_passive_voice(tags):
         for t1, t2 in zip(tags, tags[1:]))
 
 
-def identify_text_change(original_text, plagiarized_text):
+def identify_unordered_sentences(original_text, plagiarized_text):
+    # Tokenizar los textos
+    tokens1 = sent_tokenize(original_text)
+    tokens2 = sent_tokenize(plagiarized_text)
+    # Remove repeated sentences
+    tokens1 = list(set(tokens1))
+    tokens2 = list(set(tokens2))
+
+    joined_tokens_1 = " ".join(tokens1)
+    joined_tokens_2 = " ".join(tokens2)
+
+    if sorted(joined_tokens_1.split()) == sorted(joined_tokens_2.split()):
+        return "Cambio de orden"
+    else:
+        return "No hay cambio de orden"
+
+
+def identify_text_change(original_text, plagiarized_text, cosine_similarity):
     cambios = []
 
     # Desordenar las frases TODO: Agarrar las oraciones de todo el texto y
     #  compararlas con el archivo arrojado de textpreprocessing de
     #  documentos y obtener todas las oraciones preprocesadas y compararlas
     #  con el texto del archivo plagiado
-    if sorted(original_text.split()) == sorted(plagiarized_text.split()):
+    if identify_unordered_sentences(original_text,
+                                    plagiarized_text) == "Cambio de orden":
         cambios.append("Desordenar las frases")
     # Insertar o reemplazar frases
     # if not cambios:
 
-    if identify_voice_change(original_text, plagiarized_text) == "Cambio de voz":
+    if identify_voice_change(original_text,
+                             plagiarized_text) == "Cambio de voz":
         cambios.append("Cambio de voz")
 
-    if identify_time_change(original_text, plagiarized_text) == "Cambio de tiempo":
+    if identify_time_change(original_text,
+                            plagiarized_text) == "Cambio de tiempo":
         cambios.append("Cambio de tiempo")
 
-
-
     s = difflib.SequenceMatcher(None, original_text, plagiarized_text)
-    for tag, i1, i2, j1, j2 in s.get_opcodes():
-        if tag in ['replace', 'insert']:
-            print(tag)
-            cambios.append("Insertar o reemplazar frases")
-            break
+
+    if cosine_similarity > 0.8:
+        for tag, i1, i2, j1, j2 in s.get_opcodes():
+            print(f"tag={tag}, i1={i1}, i2={i2}, j1={j1}, j2={j2}")
+            if tag in ['replace', 'insert']:
+                cambios.append("Insertar o reemplazar frases")
+                break
 
     # if not cambios:
-        # Cambio de tiempo
-
+    # Cambio de tiempo
 
     # if not cambios:
-        # Cambio de voz
-
+    # Cambio de voz
 
     # Parafraseo
     if not cambios:
@@ -109,4 +127,3 @@ if __name__ == '__main__':
 
     tipo_cambio = identify_text_change(original, plagiarized)
     print(f"Tipo de cambio de texto: {tipo_cambio}")
-

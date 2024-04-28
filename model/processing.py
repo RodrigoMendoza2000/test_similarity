@@ -365,7 +365,7 @@ class Processing:
         for file in os.listdir(self.test_directory):
             testing_results[file] = self.get_most_similar_documents(
                 f"{self.test_directory}/{file}",
-                threshhold=0.55,
+                threshhold=0.6,
             )
 
         return testing_results
