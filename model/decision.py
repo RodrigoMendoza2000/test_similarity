@@ -6,6 +6,8 @@
 # ---------------------------------------------------------------
 
 import pandas as pd
+from model.plagiarism_type import identify_text_change
+
 
 def get_auc(par_confusion_matrix: dict) -> float:
     """
@@ -30,6 +32,20 @@ def get_auc(par_confusion_matrix: dict) -> float:
     return auc
 
 
+def read_file(file_path: str) -> str:
+    """
+    Read the content of a file.
+
+    Args:
+        file_path (str): The path of the file to read.
+
+    Returns:
+        str: The content of the file.
+    """
+    with open(file_path, 'r', encoding='ISO-8859-1') as file:
+        return file.read()
+
+
 class Decision:
     """
         A class to perform decision making based on plagiarism analysis.
@@ -45,7 +61,10 @@ class Decision:
 
     def __init__(self,
                  cosine_similarity_threshhold=0.7,
-                 plagiarism_percentage_threshhold=0.35):
+                 plagiarism_percentage_threshhold=0.35,
+                 document_cosine_similarity_threshhold=0.4):
+        self.document_cosine_similarity_threshhold = \
+            document_cosine_similarity_threshhold
         self.cosine_similarity_threshhold = cosine_similarity_threshhold
         self.plagiarism_percentage_threshhold = \
             plagiarism_percentage_threshhold
@@ -87,13 +106,13 @@ class Decision:
             display_text += "PLAGIARISM NOT DETECTED\n\n"
 
         for index, row in df.iterrows():
-            if row['cosine_score'] > self.cosine_similarity_threshhold:
-                display_text += f"Plagiarized Sentence: " \
+            if row['cosine_score'] < self.cosine_similarity_threshhold:
+                display_text += f"Sentence: " \
                                 f"{row['sentence']} || " \
                                 f"does not " \
                                 f"present plagiarism\n\n "
             else:
-                display_text += f"Sentence: '{row['sentence']}' || " \
+                display_text += f"Plagiarized Sentence: '{row['sentence']}' || " \
                                 f"presents plagiarism from  " \
                                 f"'{row['file_name']}' sentence " \
                                 f"'{row['similar_sentence']}'\n\n "
@@ -146,6 +165,42 @@ class Decision:
                                              / paragraph_length
 
         return plagiarism_percentage
+
+    def plagiarism_report_documents(self, doc2vec_documents) -> pd.DataFrame:
+        suspicious_documents = []
+        plagiarism_type = []
+        similar_document = []
+        percentage_plagiarism = []
+        copy = []
+
+        for file_name, original_documents in doc2vec_documents.items():
+            for original_file, cosine_similarity in original_documents.items():
+                if cosine_similarity > self.document_cosine_similarity_threshhold:
+                    suspicious_documents.append(file_name)
+                    plagiarism_type.append(identify_text_change(
+                                                                read_file('./training_data/' + original_file),
+                                                                read_file('./test_data/' + file_name)))
+                    # plagiarism_type.append('')
+                    similar_document.append(original_file)
+                    copy.append('Si')
+                    percentage_plagiarism.append(cosine_similarity)
+
+            if file_name not in suspicious_documents:
+                suspicious_documents.append(file_name)
+                plagiarism_type.append('')
+                similar_document.append('')
+                copy.append('No')
+                percentage_plagiarism.append(None)
+
+        dictionary = {'Documento sospechoso': suspicious_documents,
+                      'Copia': copy,
+                      'Documento Plagiado': similar_document,
+                      '% plagio': percentage_plagiarism,
+                      'Tipo de plagio': plagiarism_type}
+
+        df = pd.DataFrame(dictionary)
+
+        return df
 
     def is_plagiarism(self, plagiarism_percentage: float) -> bool:
         """
@@ -217,20 +272,19 @@ if __name__ == "__main__":
     doc2vecdocuments.train_model()
 
     top = doc2vecdocuments.get_most_similar_documents(
-        '../test_data/FID-02.txt')
+        '../test_data/FID-08.txt')
 
     lst = doc2vec.get_most_similar_document_sentences(
-        '../test_data/FID-02.txt')
+        '../test_data/FID-08.txt')
 
     decision = Decision()
     print(decision.get_plagiarism_sentences(lst, top))
     print(decision.get_plagiarism_pct_sentences(lst))
 
-    for i in range(1, 11):
-        doc = f'../test_data/FID-{i:02}.txt'
-        lst = doc2vec.get_most_similar_document_sentences(doc)
-        print(doc, decision.get_plagiarism_pct_sentences(lst))
-
+    # for i in range(1, 11):
+    #     doc = f'../test_data/FID-{i:02}.txt'
+    #     lst = doc2vec.get_most_similar_document_sentences(doc)
+    #     print(doc, decision.get_plagiarism_pct_sentences(lst))
 
     """training_dat = doc2vec.testing_data()
 

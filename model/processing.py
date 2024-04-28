@@ -262,7 +262,7 @@ class Processing:
 
     def get_most_similar_documents(self,
                                    document_directory,
-                                   threshhold=0.6,
+                                   threshhold=0.7,
                                    topn=3) -> dict:
         """
         Get the most similar documents to the input document.
@@ -351,11 +351,21 @@ class Processing:
 
         return most_similar_sentences
 
-    def get_training_results(self) -> dict:
+    def get_training_results_sentences(self) -> dict:
         testing_results = {}
         for file in os.listdir(self.test_directory):
             testing_results[file] = self.get_most_similar_document_sentences(
                 f"{self.test_directory}/{file}"
+            )
+
+        return testing_results
+
+    def get_training_results_documents(self) -> dict:
+        testing_results = {}
+        for file in os.listdir(self.test_directory):
+            testing_results[file] = self.get_most_similar_documents(
+                f"{self.test_directory}/{file}",
+                threshhold=0.55,
             )
 
         return testing_results
