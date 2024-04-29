@@ -262,7 +262,7 @@ class Processing:
 
     def get_most_similar_documents(self,
                                    document_directory,
-                                   threshhold=0.7,
+                                   threshhold=0.6,
                                    topn=3) -> dict:
         """
         Get the most similar documents to the input document.

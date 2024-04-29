@@ -83,11 +83,11 @@ class Preprocessing:
                          prompt: str,
                          lemmatize_or_stemming: str = 'lemmatize'
                          ) -> str:
-        if lemmatize_or_stemming not in ['lemmatize', 'stem']:
+        """if lemmatize_or_stemming not in ['lemmatize', 'stem']:
             raise ValueError(
                 "Invalid value for lemmatize_or_stemming. "
                 "Possible values: 'lemmatize', 'stem'"
-            )
+            )"""
         self.prompt = prompt.lower()
         # self.__convert_to_numeric()
         self.__replace_words()

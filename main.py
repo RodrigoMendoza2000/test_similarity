@@ -61,7 +61,7 @@ validation_dictionary = {
     'org-001.txt': False,
     'org-110.txt': False
 }
-"""import pandas as pd
+import pandas as pd
 
 documento_sospechoso = []
 copia = []
@@ -98,17 +98,17 @@ for file_name in os.listdir(f'test_data'):
 dict = {'Documento sospechoso': documento_sospechoso,
         'Copia': copia,
         'Documento Plagiado': documento_plagiado,
-        '% plagio': porcentaje_plagio}"""
+        '% plagio': porcentaje_plagio}
 
-lst = doc2vec_documents.get_training_results_documents()
+"""lst = doc2vec_documents.get_training_results_documents()
 
 decision = Decision()
 
 df = decision.plagiarism_report_documents(lst)
-print(df.to_string())
-# df = pd.DataFrame(dict)
+print(df.to_string())"""
+df = pd.DataFrame(dict)
 # df.to_csv('documentos_sospechosos.csv', index=False)
-# print('Resultados guardados en .csv como documentos_sospechosos.csv')
+print('Resultados guardados en .csv como documentos_sospechosos.csv')
 
 # decision = Decision()
 
