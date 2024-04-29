@@ -237,29 +237,6 @@ class Processing:
                             unique_id += 1
         return document_tags
 
-    # Pick a random test file from the given tests
-    def __test_model_single(self):
-        random_doc_id = random.randint(
-            0,
-            len(self.test_corpus) - 1
-        )
-        inferred_vector = self.model.infer_vector(
-            self.test_corpus[random_doc_id]
-        )
-        most_similar = self.model.dv.most_similar(
-            [inferred_vector],
-            topn=len(self.model.dv)
-        )
-
-        print(
-            f"Test Document ({random_doc_id}): " /
-            "«{' '.join(self.test_corpus[random_doc_id])}»\n"
-        )
-        for label, index in [('MOST', 0), ('MEDIAN', len(most_similar) // 2),
-                             ('LEAST', len(most_similar) - 1)]:
-            # ' '.join(self.train_corpus[most_similar[index][0]].words)))
-            print(f"{label} {most_similar[index]}")
-
     def get_most_similar_documents(self,
                                    document_directory,
                                    threshhold=0.6,
