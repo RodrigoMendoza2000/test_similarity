@@ -147,7 +147,8 @@ class Decision:
         for index, row in df.iterrows():
             if row['cosine_score'] < self.cosine_similarity_threshhold:
                 display_text += f"Sentence: " \
-                                f"{row['sentence']} || " \
+                                f"The following sentence: " \
+                                f"'{row['sentence']}' " \
                                 f"does not " \
                                 f"present plagiarism\n\n "
             else:
@@ -166,7 +167,8 @@ class Decision:
         for document, similarity in most_similar_documents.items():
             if similarity > self.cosine_similarity_threshhold:
                 display_text += f"{document} " \
-                                f"with similarity: {round(similarity, 2)*100}%\n"
+                                f"with similarity: " \
+                                f"{round(similarity, 2)*100}%\n"
 
         result['text'] = display_text
 
@@ -217,7 +219,8 @@ class Decision:
 
         for file_name, original_documents in doc2vec_documents.items():
             for original_file, cosine_similarity in original_documents.items():
-                if cosine_similarity > self.document_cosine_similarity_threshhold:
+                if cosine_similarity > \
+                        self.document_cosine_similarity_threshhold:
                     suspicious_documents.append(file_name)
                     plagiarism_type.append(identify_text_change(
                         read_file('./training_data/' + original_file),

@@ -4,13 +4,20 @@
 # Last modified: 21/04/2024
 # ---------------------------------------------------------------
 import os
-
-import pandas as pd
-
 from model.processing import Processing
 from model.decision import Decision, get_auc, generate_pdf
 
-def plagiarism_types_report():
+
+def plagiarism_types_report() -> None:
+    """
+    This function is used to generate a report of the all the test files,
+    the documents that are most similar to them, and the percentage of
+    plagiarism. It uses the doc2vec model to generate the most similar
+    documents. It then uses the Decision class to generate
+    the plagiarism report. It also returns which type of plagiarism the
+    document is. It also generates a .csv file with the results.
+    :return: None
+    """
     doc2vec_documents = Processing(training_directory='./training_data',
                                    test_directory='./test_data',
                                    document_or_sentences='document',
@@ -26,7 +33,15 @@ def plagiarism_types_report():
     df.to_csv('documentos_sospechosos.csv', index=False)
     print('Resultados guardados en .csv como documentos_sospechosos.csv')
 
-def print_auc():
+
+def print_auc() -> None:
+    """
+    This function is used to print the AUC of the model. It uses the
+    doc2vec model to generate the most similar documents. It then uses the
+    Decision class to generate the confusion matrix and the AUC.
+
+    :return: None
+    """
     doc2vec = Processing(training_directory='./training_data',
                          test_directory='./test_data',
                          document_or_sentences='sentences',
@@ -77,7 +92,11 @@ def print_auc():
     print(auc)
 
 
-def get_pdfs():
+def get_pdfs() -> None:
+    """
+    This function is used to generate the pdfs of the plagiarism reports.
+    :return: None
+    """
     decision = Decision()
 
     doc2vec = Processing(training_directory='./training_data',
@@ -108,10 +127,12 @@ def get_pdfs():
                      text=result['text'],
                      file_name=file)
 
+    print('PDFs generated in the results directory')
+
 
 if __name__ == '__main__':
-    # plagiarism_types_report()
+    plagiarism_types_report()
 
-    # print_auc()
+    print_auc()
 
     get_pdfs()
