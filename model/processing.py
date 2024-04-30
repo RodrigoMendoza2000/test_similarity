@@ -9,7 +9,6 @@ import os
 import gensim
 from sklearn.metrics import pairwise
 from nltk.tokenize import sent_tokenize
-import random
 
 
 class Processing:
@@ -195,7 +194,8 @@ class Processing:
             directory (str):
                 Path to the directory containing documents.
             tokens_only (bool, optional):
-                Whether to return only tokens or TaggedDocuments. Defaults to False.
+                Whether to return only tokens or TaggedDocuments.
+                Defaults to False.
 
         Returns:
             list: List of TaggedDocuments if tokens_only is False,
@@ -305,10 +305,11 @@ class Processing:
                 # the altered sentence
                 tokens_of_sentences.append([
                     sentence,
-                    self.preprocessing.tokenize(self.preprocessing.transform_prompt(
-                        sentence,
-                        lemmatize_or_stemming=self.lemmatize_or_stemming
-                    ))
+                    self.preprocessing.tokenize(
+                        self.preprocessing.transform_prompt(
+                            sentence,
+                            lemmatize_or_stemming=self.lemmatize_or_stemming
+                        ))
                 ])
 
         most_similar_sentences = []
@@ -355,7 +356,7 @@ if __name__ == '__main__':
                          test_directory='../test_data',
                          document_or_sentences='document',
                          lemmatize_or_stemming='lemmatize')
-    
+
     doc2vec.train_model()
 
     # lemmatize presents way better results)

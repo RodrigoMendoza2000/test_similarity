@@ -45,12 +45,14 @@ class Preprocessing:
             prompt (str): The text to be preprocessed.
 
         Methods:
-            transform_prompt(prompt, tokenize=True, lemmatize_or_stemming='lemmatize'):
+            transform_prompt(prompt, tokenize=True, lemmatize_or_stemming=
+            'lemmatize'):
                 Performs all preprocessing steps on the given text.
                 Arguments:
                     prompt (str): The text to be preprocessed.
                     tokenize (bool): Whether to tokenize the text or not.
-                    lemmatize_or_stemming (str): The method to use for lemmatization or stemming.
+                    lemmatize_or_stemming (str): The method to use for
+                    lemmatization or stemming.
                         Possible values: 'lemmatize', 'stem'
 
             __tokenize():
@@ -83,11 +85,11 @@ class Preprocessing:
                          prompt: str,
                          lemmatize_or_stemming: str = 'lemmatize'
                          ) -> str:
-        """if lemmatize_or_stemming not in ['lemmatize', 'stem']:
+        if lemmatize_or_stemming not in ['lemmatize', 'stem']:
             raise ValueError(
                 "Invalid value for lemmatize_or_stemming. "
                 "Possible values: 'lemmatize', 'stem'"
-            )"""
+            )
         self.prompt = prompt.lower()
         # self.__convert_to_numeric()
         self.__replace_words()
@@ -154,7 +156,8 @@ class Preprocessing:
 
     def __replace_words(self) -> None:
         word_replaces = {}
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'list_of_replaces.txt')
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            'list_of_replaces.txt')
         with open(path, 'r') as file:
             for line in file:
                 line_splitted = line.split()
