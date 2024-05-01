@@ -1,4 +1,4 @@
-# test_similarity
+# Text_similarity
 
 # Text Similarity Detection Project
 
@@ -39,8 +39,9 @@ doc2vec.train_model()
 ```
 
 2. Get the training results
+
 ```python
-training_results = doc2vec.get_training_results()
+training_results = doc2vec.get_training_results_sentences()
 ```
 
 3. Initialize the Decision class and get the confusion matrix and AUC:

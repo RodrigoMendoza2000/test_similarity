@@ -1,0 +1,34 @@
+Documento sospechoso,Copia,Documento Plagiado,% plagio,Tipo de plagio
+FID-01.txt,Si,org-076.txt,0.8406938910484314,['Cambio de voz']
+FID-02.txt,Si,org-104.txt,0.6452297568321228,['Parafraseo']
+FID-03.txt,Si,org-016.txt,0.9839145541191101,"['Desordenar las frases', 'Insertar o reemplazar frases']"
+FID-03.txt,Si,org-078.txt,0.6136080026626587,['Cambio de voz']
+FID-04.txt,Si,org-045.txt,0.9844087362289429,['Desordenar las frases']
+FID-05.txt,Si,org-085.txt,0.9781158566474915,['Cambio de tiempo']
+FID-06.txt,Si,org-043.txt,0.9760952591896057,['Cambio de tiempo']
+FID-06.txt,Si,org-050.txt,0.6400174498558044,['Parafraseo']
+FID-07.txt,Si,org-041.txt,0.9282494187355042,['Parafraseo']
+FID-08.txt,Si,org-079.txt,0.9880356192588806,['Insertar o reemplazar frases']
+FID-09.txt,Si,org-109.txt,0.9744828939437866,['Insertar o reemplazar frases']
+FID-09.txt,Si,org-102.txt,0.6343119144439697,['Parafraseo']
+FID-10.txt,Si,org-007.txt,0.9162328839302063,['Cambio de voz']
+FID-10.txt,Si,org-042.txt,0.643143355846405,['Cambio de voz']
+org-001.txt,No,,,
+org-002.txt,No,,,
+org-005.txt,No,,,
+org-012.txt,No,,,
+org-020.txt,No,,,
+org-026.txt,No,,,
+org-040.txt,No,,,
+org-047.txt,No,,,
+org-056.txt,No,,,
+org-059.txt,No,,,
+org-061.txt,No,,,
+org-065.txt,No,,,
+org-071.txt,No,,,
+org-081.txt,No,,,
+org-084.txt,No,,,
+org-090.txt,No,,,
+org-093.txt,No,,,
+org-100.txt,No,,,
+org-110.txt,No,,,

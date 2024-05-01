@@ -3,34 +3,54 @@
 # Author: Rodrigo Alfredo Mendoza España
 # Last modified: 21/04/2024
 # ---------------------------------------------------------------
-
+import os
 from model.processing import Processing
-from model.decision import Decision, get_auc
+from model.decision import Decision, get_auc, generate_pdf
 
-doc2vec = Processing(training_directory='./training_data',
-                     test_directory='./test_data',
-                     document_or_sentences='sentences',
-                     lemmatize_or_stemming='lemmatize')
 
-doc2vec.train_model()
-training_results = doc2vec.get_training_results()
+def plagiarism_types_report() -> None:
+    """
+    This function is used to generate a report of the all the test files,
+    the documents that are most similar to them, and the percentage of
+    plagiarism. It uses the doc2vec model to generate the most similar
+    documents. It then uses the Decision class to generate
+    the plagiarism report. It also returns which type of plagiarism the
+    document is. It also generates a .csv file with the results.
+    :return: None
+    """
+    doc2vec_documents = Processing(training_directory='./training_data',
+                                   test_directory='./test_data',
+                                   document_or_sentences='document',
+                                   lemmatize_or_stemming='lemmatize')
+    doc2vec_documents.train_model()
 
-doc2vec_documents = Processing(training_directory='./training_data',
-                               test_directory='./test_data',
-                               document_or_sentences='document',
-                               lemmatize_or_stemming='lemmatize')
-doc2vec_documents.train_model()
-"""
-for file_name in os.listdir(f'../test_data'):
-    if file_name.endswith('.txt'):
-        print(doc2vec_documents.get_most_similar_documents('../test_data/'+file_name))
-"""
+    lst = doc2vec_documents.get_training_results_documents()
+    decision = Decision()
 
-# 76 - FID-01.txt, 104 - FID-02.txt, 16 - FID-03.txt, 45 - FID-04.txt,
-# 85 - FID-05.txt, 43 - FID-06.txt, 41 - FID-07.txt, 79 - FID-08.txt,
-# 109 - FID-09.txt, 79 - FID-10.txt
+    df = decision.plagiarism_report_documents(lst)
+    print(df.to_string())
 
-validation_dictionary = {
+    df.to_csv('documentos_sospechosos.csv', index=False)
+    print('Resultados guardados en .csv como documentos_sospechosos.csv')
+
+
+def print_auc() -> None:
+    """
+    This function is used to print the AUC of the model. It uses the
+    doc2vec model to generate the most similar documents. It then uses the
+    Decision class to generate the confusion matrix and the AUC.
+
+    :return: None
+    """
+    doc2vec = Processing(training_directory='./training_data',
+                         test_directory='./test_data',
+                         document_or_sentences='sentences',
+                         lemmatize_or_stemming='lemmatize')
+
+    doc2vec.train_model()
+    training_results = doc2vec.get_training_results_sentences()
+
+    validation_dictionary = {
         'FID-01.txt': True,
         'FID-02.txt': True,
         'FID-03.txt': True,
@@ -60,13 +80,59 @@ validation_dictionary = {
         'org-100.txt': False,
         'org-001.txt': False,
         'org-110.txt': False
-}
+    }
 
-decision = Decision()
+    decision = Decision()
 
-confusion_matrix = decision.get_confusion_matrix(training_results,
-                                                 validation_dictionary)
+    confusion_matrix = decision.get_confusion_matrix(training_results,
+                                                     validation_dictionary)
 
-auc = get_auc(confusion_matrix)
-print(confusion_matrix)
-print(auc)
+    auc = get_auc(confusion_matrix)
+    print(confusion_matrix)
+    print(auc)
+
+
+def get_pdfs() -> None:
+    """
+    This function is used to generate the pdfs of the plagiarism reports.
+    :return: None
+    """
+    decision = Decision()
+
+    doc2vec = Processing(training_directory='./training_data',
+                         test_directory='./test_data',
+                         document_or_sentences='sentences',
+                         lemmatize_or_stemming='lemmatize')
+
+    doc2vec.train_model()
+
+    doc2vec_documents = Processing(training_directory='./training_data',
+                                   test_directory='./test_data',
+                                   document_or_sentences='document',
+                                   lemmatize_or_stemming='lemmatize')
+
+    doc2vec_documents.train_model()
+
+    for file in os.listdir('./test_data'):
+        lst = doc2vec.get_most_similar_document_sentences(
+            f'./test_data/{file}')
+
+        top = doc2vec_documents.get_most_similar_documents(
+            f'./test_data/{file}')
+
+        result = decision.get_plagiarism_sentences(lst, top)
+
+        generate_pdf(title=result['title'],
+                     plagiarism_percent=result['plagiarism_percent'],
+                     text=result['text'],
+                     file_name=file)
+
+    print('PDFs generated in the results directory')
+
+
+if __name__ == '__main__':
+    plagiarism_types_report()
+
+    print_auc()
+
+    get_pdfs()

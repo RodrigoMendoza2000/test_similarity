@@ -9,7 +9,6 @@ import os
 import gensim
 from sklearn.metrics import pairwise
 from nltk.tokenize import sent_tokenize
-import random
 
 
 class Processing:
@@ -195,7 +194,8 @@ class Processing:
             directory (str):
                 Path to the directory containing documents.
             tokens_only (bool, optional):
-                Whether to return only tokens or TaggedDocuments. Defaults to False.
+                Whether to return only tokens or TaggedDocuments.
+                Defaults to False.
 
         Returns:
             list: List of TaggedDocuments if tokens_only is False,
@@ -236,29 +236,6 @@ class Processing:
                             line_number += 1
                             unique_id += 1
         return document_tags
-
-    # Pick a random test file from the given tests
-    def __test_model_single(self):
-        random_doc_id = random.randint(
-            0,
-            len(self.test_corpus) - 1
-        )
-        inferred_vector = self.model.infer_vector(
-            self.test_corpus[random_doc_id]
-        )
-        most_similar = self.model.dv.most_similar(
-            [inferred_vector],
-            topn=len(self.model.dv)
-        )
-
-        print(
-            f"Test Document ({random_doc_id}): " /
-            "«{' '.join(self.test_corpus[random_doc_id])}»\n"
-        )
-        for label, index in [('MOST', 0), ('MEDIAN', len(most_similar) // 2),
-                             ('LEAST', len(most_similar) - 1)]:
-            # ' '.join(self.train_corpus[most_similar[index][0]].words)))
-            print(f"{label} {most_similar[index]}")
 
     def get_most_similar_documents(self,
                                    document_directory,
@@ -328,10 +305,11 @@ class Processing:
                 # the altered sentence
                 tokens_of_sentences.append([
                     sentence,
-                    self.preprocessing.tokenize(self.preprocessing.transform_prompt(
-                        sentence,
-                        lemmatize_or_stemming=self.lemmatize_or_stemming
-                    ))
+                    self.preprocessing.tokenize(
+                        self.preprocessing.transform_prompt(
+                            sentence,
+                            lemmatize_or_stemming=self.lemmatize_or_stemming
+                        ))
                 ])
 
         most_similar_sentences = []
@@ -351,11 +329,21 @@ class Processing:
 
         return most_similar_sentences
 
-    def get_training_results(self) -> dict:
+    def get_training_results_sentences(self) -> dict:
         testing_results = {}
         for file in os.listdir(self.test_directory):
             testing_results[file] = self.get_most_similar_document_sentences(
                 f"{self.test_directory}/{file}"
+            )
+
+        return testing_results
+
+    def get_training_results_documents(self) -> dict:
+        testing_results = {}
+        for file in os.listdir(self.test_directory):
+            testing_results[file] = self.get_most_similar_documents(
+                f"{self.test_directory}/{file}",
+                threshhold=0.6,
             )
 
         return testing_results
@@ -368,7 +356,7 @@ if __name__ == '__main__':
                          test_directory='../test_data',
                          document_or_sentences='document',
                          lemmatize_or_stemming='lemmatize')
-    
+
     doc2vec.train_model()
 
     # lemmatize presents way better results)
