@@ -75,7 +75,7 @@ def identify_time_change(original_text: str, plagiarized_text: str) -> bool:
 
 def identify_voice_change(original_text: str, plagiarized_text: str) -> bool:
     # Tokenizar los textos
-    tokens1 = nltk.word_tokenize(original_text)
+    """tokens1 = nltk.word_tokenize(original_text)
     tokens2 = nltk.word_tokenize(plagiarized_text)
 
     # Etiquetar las partes del discurso
@@ -90,7 +90,31 @@ def identify_voice_change(original_text: str, plagiarized_text: str) -> bool:
     if voz1 != voz2:
         return True
     else:
+        return False"""
+
+    original_sentences = sent_tokenize(original_text)
+    plagiarized_sentenecs = sent_tokenize(plagiarized_text)
+
+    number_of_sentencens = len(plagiarized_sentenecs)
+    count = 0
+
+    for i in range(len(plagiarized_sentenecs)):
+        try:
+            voz1 = "activa" if not identify_passive_voice(pos_tag(word_tokenize(original_sentences[i]))) else "pasiva"
+            voz2 = "activa" if not identify_passive_voice(pos_tag(word_tokenize(plagiarized_sentenecs[i]))) else "pasiva"
+            if voz1 != voz2:
+                count += 1
+
+            if identify_voice_change(o, p):
+                count += 1
+        except:
+            pass
+
+    if count / number_of_sentencens > 0.4:
+        return True
+    else:
         return False
+
 
 
 def identify_passive_voice(tags):
@@ -220,9 +244,15 @@ if __name__ == '__main__':
 
     # tipo_cambio = identify_text_change(original, plagiarized)
     # print(f"Tipo de cambio de texto: {tipo_cambio}")
-    plagiarized = "As of 2021, more than 30 countries have released " \
-                  "national artificial intelligence (AI) policy strategies."
-    original = 'As of 2021, national artificial intelligence (AI) policy ' \
-               'strategies have been released by more than 30 countries.'
+    plagiarized = "The interaction between humans and AI has emerged as a pivotal focus in crafting technology that responds empathetically and compassionately. Within this realm, the deployment of artificial empathy tactics holds significant promise for enhancing customer experiences on emotional and social levels. This study delves into refining human-AI interactions by leveraging artificial empathy strategies to enrich affective and social customer encounters. Employing a qualitative research approach, the investigation synthesizes insights from diverse studies and pertinent literature. Drawing from sources including journals, articles, and books, the analysis sheds light on the potential benefits of integrating artificial empathy strategies. The findings underscore the transformative impact of such strategies on interaction quality and customer experiences. Technologies like natural language processing, emotion recognition, and sentiment analysis empower AI to engage with users more accurately and empathetically, thereby addressing their needs and emotions more effectively."
+    original = 'Human-AI interaction has become an important focus in the development of more responsive and humane technology. In this context, the use of artificial empathy strategies is of particular interest due to its potential in improving customer experiences affectively and socially. This research aims to explore the optimization of human-AI interactions through the application of artificial empathy strategies in improving affective and social customer experiences. The research approach used is qualitative by reviewing various studies and related literature. The data sources used are journals, articles and books that are relevant to the research topic. From the research results, it was found that the implementation of artificial empathy strategies in human-AI interactions has great potential to improve the quality of interactions and customer experiences. The use of technologies such as natural language processing, emotion recognition, and sentiment analysis can enable AI to respond more precisely and sensitively to user needs and emotions.'
 
-    print(identify_voice_change(original, plagiarized))
+    plagiarized_sentenecs = sent_tokenize(plagiarized)
+    original_sentences = sent_tokenize(original)
+    for i in range(len(plagiarized_sentenecs)):
+        o = original_sentences[i]
+        p = plagiarized_sentenecs[i]
+        print(f"plagiarized sentence: {p}")
+        print(f"original sentence: {o}")
+        print(identify_voice_change(original, plagiarized))
+        print('\n\n')
