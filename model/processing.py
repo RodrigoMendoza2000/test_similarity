@@ -115,7 +115,8 @@ class Processing:
         self.model = gensim.models.doc2vec.Doc2Vec(vector_size=vector_size,
                                                    min_count=min_count,
                                                    epochs=epochs,
-                                                   window=3)
+                                                   window=3,
+                                                   dm=1)
         # Get all the unique words from all texts
         self.model.build_vocab(self.train_corpus)
         # Train the model with the specified parameters

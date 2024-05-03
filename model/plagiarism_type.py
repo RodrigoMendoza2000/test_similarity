@@ -64,9 +64,10 @@ def identify_time_change(original_text: str, plagiarized_text: str) -> bool:
                                                   total_plagiarized_verbs)
 
     # Check if the similarity ratio exceeds the threshold
-    if similarity_ratio >= 0.9 \
+    if similarity_ratio >= 0.90 \
             and not \
             identify_unordered_sentences(original_text, plagiarized_text) \
+            and not identify_insert_replace(original_text, plagiarized_text) \
             and original_text != plagiarized_text:
         return True
     else:
@@ -75,7 +76,7 @@ def identify_time_change(original_text: str, plagiarized_text: str) -> bool:
 
 def identify_voice_change(original_text: str, plagiarized_text: str) -> bool:
     # Tokenizar los textos
-    tokens1 = nltk.word_tokenize(original_text)
+    """tokens1 = nltk.word_tokenize(original_text)
     tokens2 = nltk.word_tokenize(plagiarized_text)
 
     # Etiquetar las partes del discurso
@@ -90,7 +91,52 @@ def identify_voice_change(original_text: str, plagiarized_text: str) -> bool:
     if voz1 != voz2:
         return True
     else:
+        return False"""
+
+    original_sentences = sent_tokenize(original_text)
+    plagiarized_sentenecs = sent_tokenize(plagiarized_text)
+
+    number_of_sentencens = len(plagiarized_sentenecs)
+    count = 0
+
+    for i in range(len(plagiarized_sentenecs)):
+        try:
+            word_count_original_dictionary = { x: original_sentences[i].count(x) for x in original_sentences[i]}
+            word_count_plagiarized_dictionary = { x: plagiarized_sentenecs[i].count(x) for x in plagiarized_sentenecs[i]}
+
+            # Calculate the total number of verbs in both dictionaries
+            total_original = sum(word_count_original_dictionary.values())
+            total_plagiarized = sum(word_count_plagiarized_dictionary.values())
+
+            # Calculate the intersection of verbs between the two dictionaries
+            intersection_verbs = set(word_count_original_dictionary.keys()) & set(
+                word_count_plagiarized_dictionary.keys())
+
+            # Calculate the total number of matching verbs
+            total_matching_verbs = sum(min(word_count_original_dictionary.get(verb, 0),
+                                           word_count_plagiarized_dictionary.get(verb, 0))
+                                       for verb
+                                       in intersection_verbs)
+
+            # Calculate the similarity ratio
+            similarity_ratio = total_matching_verbs / max(total_original,
+                                                          total_plagiarized)
+
+            voz1 = "activa" if not identify_passive_voice(pos_tag(word_tokenize(original_sentences[i]))) else "pasiva"
+            voz2 = "activa" if not identify_passive_voice(pos_tag(word_tokenize(plagiarized_sentenecs[i]))) else "pasiva"
+            if voz1 != voz2 and similarity_ratio > 0.8:
+                count += 1
+
+            # if identify_voice_change(o, p):
+            #     count += 1
+        except:
+            pass
+
+    if count / number_of_sentencens > 0.15:
+        return True
+    else:
         return False
+
 
 
 def identify_passive_voice(tags):
@@ -170,7 +216,7 @@ def identify_insert_replace(original_text: str,
     for tag, i1, i2, j1, j2 in s.get_opcodes():
         if tag == 'insert' and original_text in plagiarized_text:
             return True
-        if tag in ['replace'] and percentage > 0.6:
+        if tag in ['replace'] and percentage > 0.7:
             return True
     return False
 
@@ -196,13 +242,13 @@ def identify_text_change(original_text: str,
     # Insertar o reemplazar frases
     # if not cambios:
 
-    if identify_voice_change(original_text,
-                             plagiarized_text):
-        cambios.append("Cambio de voz")
-
     if identify_time_change(original_text,
                             plagiarized_text):
         cambios.append("Cambio de tiempo")
+
+    if identify_voice_change(original_text,
+                             plagiarized_text):
+        cambios.append("Cambio de voz")
 
     if identify_insert_replace(original_text, plagiarized_text):
         cambios.append("Insertar o reemplazar frases")
@@ -213,16 +259,28 @@ def identify_text_change(original_text: str,
 
     # print(cambios)
 
-    return cambios
+    return cambios[0]
 
 
 if __name__ == '__main__':
 
     # tipo_cambio = identify_text_change(original, plagiarized)
     # print(f"Tipo de cambio de texto: {tipo_cambio}")
-    plagiarized = "As of 2021, more than 30 countries have released " \
-                  "national artificial intelligence (AI) policy strategies."
-    original = 'As of 2021, national artificial intelligence (AI) policy ' \
-               'strategies have been released by more than 30 countries.'
+    plagiarized = "The sphere of artificial intelligence (AI) technology is quite wide. Collaborative an individual technologies bases on AI are available nowadays. One of them is computer vision technology. Computer vision is also related to other technologies: Machine learning (ML), deep learning (DL), artificial neural networks, etc. Computer vision is applied in many different areas. One of the areas where it has been widely applied in recent times is healthcare. In healthcare, various algorithms in the aforementioned technologies are used to obtain meaningful information from medical images. Computer vision, as a concept, and its fields of application, particularly in healthcare, are reviewed in this chapter. Also, the example of tumor detection by computer vision in a MATLAB environment is considered."
+    original = 'The sphere of artificial intelligence (AI) technology is quite wide. There are many individual and collaborative AI-based technologies available. One of them is computer vision technology. Computer vision is also related to other technologies: Machine learning (ML), deep learning (DL), artificial neural networks, etc. Computer vision is applied in many different areas. One of the areas where it has been widely applied in recent times is healthcare. In healthcare, various algorithms in the aforementioned technologies are used to obtain meaningful information from medical images. In this chapter, the concept of computer vision, its fields of application, and its application in healthcare are reviewed. Also, the example of tumor detection by computer vision in a MATLAB environment is considered.'
 
-    print(identify_voice_change(original, plagiarized))
+    plagiarized_sentenecs = sent_tokenize(plagiarized)
+    original_sentences = sent_tokenize(original)
+    for i in range(len(plagiarized_sentenecs)):
+        voz1 = "activa" if not identify_passive_voice(
+            pos_tag(word_tokenize(original_sentences[i]))) else "pasiva"
+        voz2 = "activa" if not identify_passive_voice(
+            pos_tag(word_tokenize(plagiarized_sentenecs[i]))) else "pasiva"
+        print(f"voz original: {voz1}")
+        print(f"voz plagio: {voz2}")
+        o = original_sentences[i]
+        p = plagiarized_sentenecs[i]
+        print(f"plagiarized sentence: {p}")
+        print(f"original sentence: {o}")
+        print(identify_voice_change(original, plagiarized))
+        print('\n\n')
