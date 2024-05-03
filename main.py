@@ -51,35 +51,37 @@ def print_auc() -> None:
     training_results = doc2vec.get_training_results_sentences()
 
     validation_dictionary = {
-        'FID-01.txt': True,
-        'FID-02.txt': True,
-        'FID-03.txt': True,
-        'FID-04.txt': True,
-        'FID-05.txt': True,
-        'FID-06.txt': True,
-        'FID-07.txt': True,
-        'FID-08.txt': True,
-        'FID-09.txt': True,
-        'FID-10.txt': True,
-        'org-002.txt': False,
-        'org-005.txt': False,
-        'org-012.txt': False,
-        'org-020.txt': False,
-        'org-026.txt': False,
-        'org-040.txt': False,
-        'org-047.txt': False,
-        'org-056.txt': False,
-        'org-059.txt': False,
-        'org-061.txt': False,
-        'org-065.txt': False,
-        'org-071.txt': False,
-        'org-081.txt': False,
-        'org-084.txt': False,
-        'org-090.txt': False,
-        'org-093.txt': False,
-        'org-100.txt': False,
-        'org-001.txt': False,
-        'org-110.txt': False
+        'FID-001.txt': False,
+        'FID-002.txt': False,
+        'FID-003.txt': False,
+        'FID-004.txt': False,
+        'FID-005.txt': True,
+        'FID-006.txt': False,
+        'FID-007.txt': False,
+        'FID-008.txt': False,
+        'FID-009.txt': False,
+        'FID-010.txt': True,
+        'FID-011.txt': False,
+        'FID-012.txt': False,
+        'FID-013.txt': False,
+        'FID-014.txt': False,
+        'FID-015.txt': False,
+        'FID-016.txt': True,
+        'FID-017.txt': False,
+        'FID-018.txt': True,
+        'FID-019.txt': True,
+        'FID-020.txt': False,
+        'FID-021.txt': False,
+        'FID-022.txt': True,
+        'FID-023.txt': True,
+        'FID-024.txt': False,
+        'FID-025.txt': False,
+        'FID-026.txt': True,
+        'FID-027.txt': True,
+        'FID-028.txt': False,
+        'FID-029.txt': True,
+        'FID-030.txt': False
+
     }
 
     decision = Decision()
@@ -88,8 +90,9 @@ def print_auc() -> None:
                                                      validation_dictionary)
 
     auc = get_auc(confusion_matrix)
-    print(confusion_matrix)
-    print(auc)
+    for key, value in confusion_matrix.items():
+        print(f"{key}: {value}")
+    print(f"AUC score: {auc}")
 
 
 def get_pdfs() -> None:
@@ -131,8 +134,8 @@ def get_pdfs() -> None:
 
 
 if __name__ == '__main__':
-    plagiarism_types_report()
+    # plagiarism_types_report()
 
     print_auc()
 
-    get_pdfs()
+    # get_pdfs()

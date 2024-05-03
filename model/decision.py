@@ -229,12 +229,12 @@ class Decision:
                     # plagiarism_type.append('')
                     similar_document.append(original_file)
                     copy.append('Si')
-                    percentage_plagiarism.append(cosine_similarity)
+                    percentage_plagiarism.append(round(cosine_similarity, 2))
 
             if file_name not in suspicious_documents:
                 suspicious_documents.append(file_name)
                 plagiarism_type.append('')
-                similar_document.append('')
+                similar_document.append('Ninguno')
                 copy.append('No')
                 percentage_plagiarism.append(None)
 
