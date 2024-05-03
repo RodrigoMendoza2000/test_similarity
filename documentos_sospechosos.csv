@@ -1,39 +1,41 @@
 Documento sospechoso,Copia,Documento Plagiado,% plagio,Tipo de plagio
-FID-001.txt,No,,,
-FID-002.txt,No,,,
-FID-003.txt,No,,,
-FID-004.txt,No,,,
-FID-005.txt,Si,org-059.txt,0.7795581221580505,Insertar o reemplazar frases
-FID-005.txt,Si,org-024.txt,0.6643468737602234,Parafraseo
-FID-005.txt,Si,org-023.txt,0.6555182933807373,Parafraseo
-FID-006.txt,No,,,
-FID-007.txt,No,,,
-FID-008.txt,No,,,
-FID-009.txt,No,,,
-FID-010.txt,Si,org-091.txt,0.9737343788146973,Parafraseo
-FID-010.txt,Si,org-070.txt,0.7098056077957153,Parafraseo
-FID-011.txt,No,,,
-FID-012.txt,No,,,
-FID-013.txt,No,,,
-FID-014.txt,No,,,
-FID-015.txt,No,,,
-FID-016.txt,Si,org-057.txt,0.9890742897987366,Cambio de voz
-FID-017.txt,No,,,
-FID-018.txt,Si,org-014.txt,0.9584643244743347,Insertar o reemplazar frases
-FID-019.txt,Si,org-078.txt,0.9782739281654358,Insertar o reemplazar frases
-FID-019.txt,Si,org-080.txt,0.6345211267471313,Parafraseo
-FID-019.txt,Si,org-074.txt,0.6108289957046509,Parafraseo
-FID-020.txt,No,,,
-FID-021.txt,No,,,
-FID-022.txt,Si,org-020.txt,0.9860458374023438,Insertar o reemplazar frases
-FID-023.txt,Si,org-023.txt,0.9938427209854126,Desordenar las frases
-FID-023.txt,Si,org-024.txt,0.9926016330718994,Desordenar las frases
-FID-023.txt,Si,org-014.txt,0.6201392412185669,Parafraseo
-FID-024.txt,No,,,
-FID-025.txt,No,,,
-FID-026.txt,Si,org-101.txt,0.9930424094200134,Cambio de tiempo
-FID-027.txt,Si,org-067.txt,0.9934539794921875,Insertar o reemplazar frases
-FID-027.txt,Si,org-037.txt,0.6474626660346985,Parafraseo
-FID-028.txt,No,,,
-FID-029.txt,Si,org-109.txt,0.906769335269928,Insertar o reemplazar frases
-FID-030.txt,No,,,
+FID-001.txt,No,Ninguno,,
+FID-002.txt,No,Ninguno,,
+FID-003.txt,No,Ninguno,,
+FID-004.txt,No,Ninguno,,
+FID-005.txt,Si,org-059.txt,0.79,Insertar o reemplazar frases
+FID-005.txt,Si,org-024.txt,0.65,Parafraseo
+FID-005.txt,Si,org-023.txt,0.64,Parafraseo
+FID-006.txt,No,Ninguno,,
+FID-007.txt,No,Ninguno,,
+FID-008.txt,No,Ninguno,,
+FID-009.txt,No,Ninguno,,
+FID-010.txt,Si,org-091.txt,0.97,Parafraseo
+FID-010.txt,Si,org-070.txt,0.7,Parafraseo
+FID-011.txt,No,Ninguno,,
+FID-012.txt,No,Ninguno,,
+FID-013.txt,No,Ninguno,,
+FID-014.txt,No,Ninguno,,
+FID-015.txt,No,Ninguno,,
+FID-016.txt,Si,org-057.txt,0.99,Cambio de voz
+FID-017.txt,No,Ninguno,,
+FID-018.txt,Si,org-014.txt,0.95,Insertar o reemplazar frases
+FID-019.txt,Si,org-078.txt,0.98,Insertar o reemplazar frases
+FID-019.txt,Si,org-080.txt,0.63,Parafraseo
+FID-019.txt,Si,org-072.txt,0.61,Parafraseo
+FID-020.txt,Si,org-045.txt,0.62,Parafraseo
+FID-021.txt,No,Ninguno,,
+FID-022.txt,Si,org-020.txt,0.99,Insertar o reemplazar frases
+FID-023.txt,Si,org-024.txt,0.99,Desordenar las frases
+FID-023.txt,Si,org-023.txt,0.99,Desordenar las frases
+FID-023.txt,Si,org-014.txt,0.63,Parafraseo
+FID-024.txt,No,Ninguno,,
+FID-025.txt,No,Ninguno,,
+FID-026.txt,Si,org-101.txt,0.99,Cambio de tiempo
+FID-026.txt,Si,org-011.txt,0.6,Parafraseo
+FID-027.txt,Si,org-067.txt,0.99,Insertar o reemplazar frases
+FID-027.txt,Si,org-037.txt,0.64,Parafraseo
+FID-028.txt,No,Ninguno,,
+FID-029.txt,Si,org-109.txt,0.91,Insertar o reemplazar frases
+FID-029.txt,Si,org-102.txt,0.62,Parafraseo
+FID-030.txt,No,Ninguno,,
