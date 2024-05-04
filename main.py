@@ -125,17 +125,12 @@ def get_pdfs() -> None:
 
         result = decision.get_plagiarism_sentences(lst, top)
 
-        generate_pdf(title=result['title'],
-                     plagiarism_percent=result['plagiarism_percent'],
-                     text=result['text'],
-                     file_name=file)
-
-    print('PDFs generated in the results directory')
+        print(decision.generate_pdf_report(file, lst, top))
 
 
 if __name__ == '__main__':
-    # plagiarism_types_report()
+    plagiarism_types_report()
 
     print_auc()
 
-    # get_pdfs()
+    get_pdfs()
