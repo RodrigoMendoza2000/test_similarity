@@ -4,14 +4,14 @@ FID-002.txt,No,Ninguno,,
 FID-003.txt,No,Ninguno,,
 FID-004.txt,No,Ninguno,,
 FID-005.txt,Si,org-059.txt,0.79,Insertar o reemplazar frases
-FID-005.txt,Si,org-024.txt,0.65,Parafraseo
-FID-005.txt,Si,org-023.txt,0.64,Parafraseo
+FID-005.txt,Si,org-024.txt,0.66,Parafraseo
+FID-005.txt,Si,org-023.txt,0.66,Parafraseo
 FID-006.txt,No,Ninguno,,
 FID-007.txt,No,Ninguno,,
 FID-008.txt,No,Ninguno,,
 FID-009.txt,No,Ninguno,,
-FID-010.txt,Si,org-091.txt,0.97,Parafraseo
-FID-010.txt,Si,org-070.txt,0.7,Parafraseo
+FID-010.txt,Si,org-091.txt,0.98,Parafraseo
+FID-010.txt,Si,org-070.txt,0.68,Parafraseo
 FID-011.txt,No,Ninguno,,
 FID-012.txt,No,Ninguno,,
 FID-013.txt,No,Ninguno,,
@@ -20,22 +20,20 @@ FID-015.txt,No,Ninguno,,
 FID-016.txt,Si,org-057.txt,0.99,Cambio de voz
 FID-017.txt,No,Ninguno,,
 FID-018.txt,Si,org-014.txt,0.95,Insertar o reemplazar frases
-FID-019.txt,Si,org-078.txt,0.98,Insertar o reemplazar frases
-FID-019.txt,Si,org-080.txt,0.63,Parafraseo
-FID-019.txt,Si,org-072.txt,0.61,Parafraseo
-FID-020.txt,Si,org-045.txt,0.62,Parafraseo
+FID-019.txt,Si,org-078.txt,0.97,Insertar o reemplazar frases
+FID-019.txt,Si,org-074.txt,0.67,Parafraseo
+FID-019.txt,Si,org-080.txt,0.61,Parafraseo
+FID-020.txt,Si,org-045.txt,0.61,Parafraseo
 FID-021.txt,No,Ninguno,,
-FID-022.txt,Si,org-020.txt,0.99,Insertar o reemplazar frases
-FID-023.txt,Si,org-024.txt,0.99,Desordenar las frases
+FID-022.txt,Si,org-020.txt,0.98,Insertar o reemplazar frases
 FID-023.txt,Si,org-023.txt,0.99,Desordenar las frases
-FID-023.txt,Si,org-014.txt,0.63,Parafraseo
+FID-023.txt,Si,org-024.txt,0.99,Desordenar las frases
 FID-024.txt,No,Ninguno,,
 FID-025.txt,No,Ninguno,,
 FID-026.txt,Si,org-101.txt,0.99,Cambio de tiempo
-FID-026.txt,Si,org-011.txt,0.6,Parafraseo
 FID-027.txt,Si,org-067.txt,0.99,Insertar o reemplazar frases
-FID-027.txt,Si,org-037.txt,0.64,Parafraseo
-FID-028.txt,No,Ninguno,,
+FID-027.txt,Si,org-037.txt,0.62,Parafraseo
+FID-028.txt,Si,org-072.txt,0.6,Parafraseo
 FID-029.txt,Si,org-109.txt,0.91,Insertar o reemplazar frases
-FID-029.txt,Si,org-102.txt,0.62,Parafraseo
+FID-029.txt,Si,org-102.txt,0.6,Parafraseo
 FID-030.txt,No,Ninguno,,

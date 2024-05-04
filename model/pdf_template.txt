@@ -1,0 +1,27 @@
+<html>
+<body>
+    <div style="font-size: 12px;">
+        <h1 style="text-align: center;font-size: 16px;font-weight: bold;">
+            File name: {} <br>
+            Result: <span style="font-size: 16px;font-weight: bold; color: {};">{}</span> <br>
+            Plagiarism percentage: <span style="font-size: 16px;font-weight: bold; color: {};">{}</span>
+        </h1>
+    
+        <p style="display: {};">
+            <span style="font-weight: bold; font-size: 14px;">Most similar document(s):</span><br>
+            {}
+        </p>
+    
+        <p>
+            <span style="font-weight: bold; font-size: 14px;">Text to analyze: </span><br>
+            {}
+        </p>
+
+        <p>
+            <span style="font-weight: bold; font-size: 14px;">Sentence analysis: </span><br>
+            {}
+        </p>
+    </div>
+
+</body>
+</html>
